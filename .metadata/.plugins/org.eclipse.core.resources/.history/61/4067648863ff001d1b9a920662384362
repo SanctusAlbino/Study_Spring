@@ -1,0 +1,19 @@
+package kr.co.smart;
+
+import javax.servlet.http.HttpServlet;
+
+/**
+ * Servlet implementation class CustomerController
+ */
+public class CustomerController extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public CustomerController() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+}

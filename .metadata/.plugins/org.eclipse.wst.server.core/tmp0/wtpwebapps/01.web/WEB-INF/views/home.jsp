@@ -16,5 +16,6 @@
 <div><a href="<c:url value='/second'/>">현재시각 </a></div>
 <div><a href="<c:url value='/zero'/>">지금 </a></div>
 <div><a href="<c:url value='/member'/>">회원가입 </a></div>
+<div><a href="<c:url value='/login'/>">로그인 </a></div>
 </body>
 </html>

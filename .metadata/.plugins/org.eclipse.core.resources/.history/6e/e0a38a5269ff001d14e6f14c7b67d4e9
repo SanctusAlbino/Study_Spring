@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+ <!-- home, index -->
+	<definition name="*" template="/WEB-INF/views/tiles/layout.jsp">
+		<put-attribute name="container" value="/WEB-INF/views/home.jsp"></put-attribute>
+	</definition>
+	<!-- customer/list, customer/new, customer/info -->
+	<definition name="customer" template="/WEB-INF/views/tiles/layout.jsp">
+		<put-attribute name="container" value="/WEB-INF/views/customer"></put-attribute>
+	</definition>
+</tiles-definitions>
