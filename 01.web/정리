@@ -30,9 +30,10 @@
 경로 접근 방법: @PathVariable 사용
 
 
-응답화면연결형태
-1. forward방식 
-2. redirect방식
+
+응답화면연결형태 
+1. forward방식 - 요청uri가 그대로 유지됨
+2. redirect방식 - 요청uri가 바뀜
 
 
 

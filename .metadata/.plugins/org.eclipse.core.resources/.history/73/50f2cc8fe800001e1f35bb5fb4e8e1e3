@@ -1,0 +1,8 @@
+package com.my.app;
+
+import org.junit.runner.RunWith;
+
+@RunWith(Springj)
+public class DBTest {
+
+}
