@@ -9,6 +9,21 @@
 </head>
 <body>
 	<h3 class="my-4">고객목록</h3>
+	<div class="row my-3 justify-content-between">
+	<div class="col-auto">
+	<form method="post" action="list.cu">
+		<div class="input-group">
+			<label class="col-from-label me-3">고객명</label>
+			<input type="text" name="name" value="${name}" class="form-control" />
+			<button class="btn btn-primary px-3"><i class="fa-solid fa-magnifying-glass"></i></button>
+		</div>
+	</form>
+	</div>
+		<div class="col-auto">	
+			<button class="btn btn-primary " onclick="location='new.cu'">고객등록</button>
+		</div>
+	</div>
+	
 	<table class="tb-list">
 	<colgroup>
 		<col width=200px">
@@ -38,7 +53,7 @@ for(String name :names){
 		
 	<c:forEach items="${list}" var="vo">
 		<tr>
-			<td>${vo.name }</td>
+			<td><a class="text-link" href="info.cu?id=${vo.id}">${vo.name }</a></td>
 			<td>${vo.phone }</td>
 			<td>${vo.email }</td>
 		</tr>

@@ -10,6 +10,7 @@ public interface CustomerService {
 	void customer_insert(CustomerVO vo);
 	//고객목록 조회↓
 	List<CustomerVO> customer_list();
+	List<CustomerVO> customer_list(String name); // 이름검색 고객목록 조회
 	//고객 상세정보 조회↓
 	CustomerVO customer_info(int id);
 	//고객정보 수정 저장↓

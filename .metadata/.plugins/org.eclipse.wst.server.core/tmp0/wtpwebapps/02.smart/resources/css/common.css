@@ -12,3 +12,5 @@ table th {background-color: #eee !important;}
 table.tb-list tr {height:48px}
 table.tb-row tr {height:60px}
 table.tb-list th, table.tb-list td {text-align: center;}
+
+a.text-link:hover {color: #0d6efd; text-decoration: underline;}
