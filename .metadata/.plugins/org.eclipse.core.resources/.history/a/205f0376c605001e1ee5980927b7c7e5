@@ -1,0 +1,9 @@
+package hr;
+
+public interface HrService {
+	//CRUD
+	void employee_insert(); //신규사원등록
+	//사원목록조회
+	//사원정보조회
+	//사원정보변경
+}
