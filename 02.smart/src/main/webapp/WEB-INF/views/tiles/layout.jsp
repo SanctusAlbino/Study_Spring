@@ -19,15 +19,21 @@
         <meta name="description" content="" />
         <meta name="author" content="" />
         <title>스마트웹&amp;앱 ${title }</title>
+        <c:set var="mm" value="<%=new java.util.Date() %>"/> 
         <!-- Favicon-->
         <link rel="icon" type="image/x-icon" href="<c:url value='/img/hanul.ico' />" />
         <!-- Core theme CSS (includes Bootstrap)-->
-        <link href="<c:url value='/css/styles.css?<%=new java.util.Date() %>'/>" rel="stylesheet" />
-        <link href="<c:url value='/css/common.css?<%=new java.util.Date() %>'/>" rel="stylesheet" />
+        <link href="<c:url value='/css/styles.css?${mm}'/>" rel="stylesheet" />
+        <link href="<c:url value='/css/common.css?${mm}'/>" rel="stylesheet" />
        <!--  cdnjs.com > fontawesome 검색 > styling, javascript 선언문 복사해서 넣기 --> 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
        <!--  //fontawesome --> 
+       <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+       <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+       <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+       <script src="<c:url value='/js/common.js?${mm}'/>"></script>
         
     </head>
     <body>
@@ -84,6 +90,7 @@
         <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Core theme JS-->
-        <script src="js/scripts.js"></script>
-    </body>
+        <script src="<c:url value='/js/scripts.js'/>"></script>
+        <%-- <c:url value="js/scripts.js"/></c:url> --%>
+    </body> 
 </html>

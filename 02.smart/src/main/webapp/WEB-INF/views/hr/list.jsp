@@ -9,17 +9,23 @@
 <body>
 <h3 class="my-4"> 사원목록</h3>
 
-<div class="row">
+<form method="post" action="list">
+<div class="row my-3 justify-content-between">
 	<div class="col-auto d-flex align-items-center">
 		<lable class="me-3">부서명</lable>
-		<select class="form-control col">
-			<option>전체</option>
-			<option>Executive</option>
-			<option>IT</option>
+		<select name="department_id" class="form-select col"onchange="submit()">
+			<option value="-1">전체</option>
+			<c:forEach items="${departments}" var="d">
+			<option value="${d.department_id }" ${d.department_id eq department_id ? 'selected' : '' }>${d.department_name }</option>
+			
+			</c:forEach>
 		</select>
 	</div>
+	<div class="col-auto">
+	<button type="button" onclick="location='insert'"  class="btn btn-primary">사원등록</button>
+	</div>
 </div>
-
+</form>
 
 <table class="tb-list">
 <colgroup>
@@ -36,7 +42,7 @@
 		</c:if>
 		<!--사ㅝㄴ정보가 있는 경우  -->		
 		<c:forEach items="${list }" var="vo">
-		<tr><td>${vo.employee_id}</td><td>${vo.name }</td><td>${vo.department_name }</td><td>${ vo.job_title }</td><td>${vo.hire_date }</td></tr>
+		<tr><td>${vo.employee_id}</td><td><a class="text-link" href="info?id=${vo.employee_id}">${vo.name }</a></td><td>${vo.department_name }</td><td>${ vo.job_title }</td><td>${vo.hire_date }</td></tr>
 		</c:forEach>
 </table>
 </body>
