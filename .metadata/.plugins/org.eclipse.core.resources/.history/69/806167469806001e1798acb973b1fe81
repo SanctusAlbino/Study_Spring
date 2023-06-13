@@ -1,0 +1,14 @@
+/**
+ * 공통함수선언
+ */
+ $( function() {
+	$.datepicker.setDefaults({
+		dateFormat: "yy-mm-dd", 
+		changeYear: true,
+		changeMonth: true
+	})
+	
+    $( ".date" ).datepicker();
+  } );
+  
+  

@@ -14,6 +14,17 @@
 		<org.slf4j-version>1.6.6</org.slf4j-version>
 	</properties>
 	<dependencies>
+	
+	<!--비밀번호 암호화용 라이브러리  -->
+	<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+<dependency>
+    <groupId>org.springframework.security</groupId>
+    <artifactId>spring-security-core</artifactId>
+    <version>5.7.5</version>
+</dependency>
+	
+	
+	
 	<!-- 데이터객체의 getter, setter 자동선언  -->
 	<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
 <dependency>

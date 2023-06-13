@@ -1,0 +1,15 @@
+/**
+ * 공통함수선언
+ */
+ $( function() {
+	$.datepicker.setDefaults({
+		dateFormat: "yy-mm-dd", 
+		changeYear: true,
+		changeMonth: true,
+		yearRange: "2002:2023"
+	})
+	
+    $( ".date" ).datepicker();
+  } );
+  
+  

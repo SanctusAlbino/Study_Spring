@@ -7,6 +7,7 @@ import lombok.Setter;
 
 @Getter @Setter
 public class EmployeeVO {
+	// String "" => int
 	private int employee_id, department_id, salary;
 	private String last_name, first_name, name, job_id, department_name, job_title
 					, phone_number, email;

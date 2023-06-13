@@ -1,0 +1,6 @@
+/**
+ * 공통함수선언
+ */
+ $( function() {
+    $( "#datepicker" ).datepicker();
+  } );

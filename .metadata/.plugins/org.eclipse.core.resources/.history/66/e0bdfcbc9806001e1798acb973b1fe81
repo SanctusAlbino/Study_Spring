@@ -1,0 +1,17 @@
+/**
+ * 공통함수선언
+ */
+ $( function() {
+	var today = new Date();
+    var	range = today.getFullYear()-100 + ':' + today.getFullYear();
+	$.datepicker.setDefaults({
+		dateFormat: "yy-mm-dd", 
+		changeYear: true,
+		changeMonth: true,
+		yearRange: range,
+	})
+	
+    $( ".date" ).datepicker();
+  } );
+  
+  
