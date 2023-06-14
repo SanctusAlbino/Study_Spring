@@ -15,6 +15,16 @@
 	</properties>
 	<dependencies>
 	
+	<!--이메일 전송용 라이브러리  -->
+	<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-email -->
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-email</artifactId>
+    <version>1.5</version>
+</dependency>
+	
+	
+	
 	<!--비밀번호 암호화용 라이브러리  -->
 	<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
 <dependency>

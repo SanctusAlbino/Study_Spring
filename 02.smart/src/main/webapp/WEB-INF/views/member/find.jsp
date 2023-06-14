@@ -12,44 +12,32 @@
          <div class="card shadow-lg border-0 rounded-lg mt-5">
              <h3 class="text-center"><a href="<c:url value='/'/>">
              	<img src="<c:url value='/img/hanul.logo.png'/>" /></a></h3>
+             	<h4 class="text-center">비밀번호 찾기</h4>
              <div class="card-body">
-                 <form method="post" action="smartLogin">
+                 <form method="post" action="resetPassword">
                      <div class="form-floating mb-3">
                          <input class="form-control" type="text" name="userid" required placeholder="아이디">
                          <label>아이디</label>
                      </div>
                      <div class="form-floating mb-3">
-                         <input class="form-control" name="userpw" type="password" required placeholder="비밀번호">
-                         <label>비밀번호</label>
+                         <input class="form-control" name="email" type="text" required placeholder="이메일">
+                         <label>이메일</label>
                      </div>
-                     <button class="btn btn-primary form-control py-2">로그인</button>
+                     
                     
-                     <hr>
-                     <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                         <a class="small" href="index.html">회원가입</a>
-                         <a class="small" href="findPassword">비밀번호 찾기</a>
+                     <div class="d-flex gap-3 justify-content-center">
+                         <a class="btn btn-primary form-control py-3" onclick="$('form').submit()">확인</a>
+                         <a class="btn btn-outline-primary form-control py-3" href="login">취소</a>
                      </div>
                  </form>
              </div>
              <div class="card-footer text-center py-3">
                  <div class="small"><a href="register.html">Need an account? Sign up!</a></div>
              </div>
-         </div>
+        </div>
      </div>
- </div>
- <jsp:include page="/WEB-INF/views/include/modal_alert.jsp"/>
+</div>
+
  
- <script>
- $(function(){
-	 if( ${not empty fail}){//로그인 실패인 경우
-		modalAlert("warning", "로그인 실패", "아이디나 비밀번호가 일치하지 않습니다.!");
-	 	new bootstrap.Modal($('#modal-alert')).show();
-	 }
- })
- 
- $('#modal-alert .btn-ok').click(function(){
-	 $('[name=userid]').focus();
- })
- </script>
 </body>
 </html>
