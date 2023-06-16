@@ -1,0 +1,27 @@
+package smart.common;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class CommonUtility {
+	
+	// 이메일 보내기
+	public boolean sendPassword() {
+		boolean send = true;
+		
+		return send;
+	}
+	
+// context root url 지정
+	public String appURL( HttpServletRequest request ) {
+		//http://localhost:8080/smart
+		StringBuffer url = new StringBuffer("http://");
+		//localhost = 127.0.0.1 = 본인ip
+		url.append( request.getServerName() ).append(":"); //  http://localhost:
+		url.append( request.getServerPort() );  //  http://localhost:8080
+		url.append( request.getContextPath() ); //  http://localhost:8080/smart
+		return url.toString();
+	}
+}

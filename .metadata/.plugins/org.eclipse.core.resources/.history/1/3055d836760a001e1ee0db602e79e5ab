@@ -1,0 +1,5 @@
+package smart.member;
+
+public interface MemberService {
+
+}

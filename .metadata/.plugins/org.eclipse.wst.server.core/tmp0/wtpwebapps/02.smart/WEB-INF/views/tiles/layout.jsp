@@ -77,13 +77,13 @@
                                 <c:if test="${!empty loginInfo}">
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" 
-                                    aria-expanded="false">홍길동</a>
+                                    aria-expanded="false">${loginInfo.name}</a>
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                        <a class="dropdown-item" >아이디: ghghg</a>
+                                        <a class="dropdown-item" >아이디: ${loginInfo.userid}</a>
                                         <a class="dropdown-item" href="">My Page</a>
-                                        <a class="dropdown-item" href="">비밀번호 변경</a>
+                                        <a class="dropdown-item" href="<c:url value ='/member/changePassword'/>">비밀번호 변경</a>
                                         <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item" href="#!">로그아웃</a>
+                                        <a class="dropdown-item" href="<c:url value='/member/logout'/>">로그아웃</a>
                                     </div>
                                 </li></c:if> 
                             </ul>
