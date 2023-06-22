@@ -5,11 +5,13 @@ import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import smart.common.CommonUtility;
@@ -25,19 +27,78 @@ public class MemberController {
 	@Autowired
 	private BCryptPasswordEncoder pwEncoder;
 	
-	//로그아웃 처리 요청
-	@RequestMapping("/logout")
-	public String logout(HttpSession session) {
-		session.removeAttribute("loginInfo");
-		return "redirect:/";
+	//아이디 중복확인 처리 요청
+	@ResponseBody @RequestMapping("/useridCheck")
+	public boolean useridCheck(String userid) {
+		//화면에서 입력한 아이디가 DB에 있는지 여부를 확인
+		//DB에 없는 아이디이면 사용가능, 있는 아이디이면 사용불가능
+		return service.member_info(userid)==null ? true : false;
 	}
 	
-	//새로운 비번 변경 저장 처리 요청
-	@ResponseBody @RequestMapping("/updatePassword")
+	
+	
+	//회원가입 처리 요청
+	@ResponseBody 
+	@RequestMapping(value="/register", produces="text/html; charset=utf-8")
+	public String join(MemberVO vo, HttpServletRequest request, MultipartFile file) {
+		if( !file.isEmpty()) {//첨부파일이 있는 경우
+			//서버의 물리적인 영역에 파일을 저장하는 처리
+			
+		}
+		
+		//화면에서 입력한 정보로 DB에 신규회원정보 저장한 후
+		//회원가입 성공 여부를 alert으로 띄운다.
+		
+		//비밀번호 암호화
+		vo.setUserpw(pwEncoder.encode(vo.getUserpw() ) );
+		
+		StringBuffer msg = new StringBuffer("<script>");
+		if(service.member_join(vo)==1) {
+			msg.append("alert('회원가입을 축하합니다!ㅇㅅㅇ'); location=' ") 
+			.append(request.getContextPath())
+			.append("'");
+		}else {
+			msg.append("alert('회원가입 실패;;;'); history.go(-1)");
+		}
+		msg.append("</script>");
+		
+		return msg.toString();
+	}
+	         
+	//회원가입 화면 요청
+	@RequestMapping("/join")
+	public String join(HttpSession session) {
+		session.setAttribute("category", "join");
+		return "member/join";
+	}
+	
+	
+	// 로그아웃 처리 요청
+	@RequestMapping("/logout")
+	public String logout(HttpSession session, HttpServletRequest request) {
+		MemberVO login = (MemberVO)session.getAttribute("loginInfo");
+		session.removeAttribute("loginInfo");
+		String social = login.getSocial();
+	if(social !=null && social.equals("K")) {
+			
+		//curl -v -X GET "https://kauth.kakao.com/oauth/logout
+		//?client_id=${YOUR_REST_API_KEY}
+		//&logout_redirect_uri=${YOUR_LOGOUT_REDIRECT_URI}"
+		StringBuffer url = new StringBuffer("https://kauth.kakao.com/oauth/logout");
+		url.append("?client_id=").append(KAKAO_ID);
+		url.append("&logout_redirect_uri=").append(common.appURL(request));
+		return "redirect:" + url.toString();
+	}else
+			return "redirect:/";
+	}
+
+	// 새로운 비번 변경 저장 처리 요청
+	@ResponseBody
+	@RequestMapping("/updatePassword")
 	public boolean update(MemberVO vo) {
-		//화면에서 입력한 새 비밀번호가 DB에 변경저장
-		vo.setUserpw( pwEncoder.encode(vo.getUserpw()));
-		return service.member_resetPassword(vo)==1 ? true:false;
+		// 화면에서 입력한 새 비밀번호가 DB에 변경저장
+		vo.setUserpw(pwEncoder.encode(vo.getUserpw()));
+		return service.member_resetPassword(vo) == 1 ? true : false;
 	}
 
 	// 현재비밀번호 확인 요청
@@ -94,6 +155,176 @@ public class MemberController {
 	@RequestMapping("/findPassword")
 	public String find() {
 		return "default/member/find";
+	}
+
+	// id:uqcskjA0ukDtBv961qnJ
+	// secret: P3B66DMMM6
+	private String NAVER_ID = "uqcskjA0ukDtBv961qnJ";
+	private String NAVER_SECRET = "P3B66DMMM6";
+	private String KAKAO_ID = "2b5d34b73ad483e217c0e8749002b234"; 
+
+	// 카카오로그인처리 요청
+	@RequestMapping("/kakaoLogin")
+	public String kakaologin(HttpSession session, HttpServletRequest request) {
+		// https://kauth.kakao.com/oauth/authorize?response_type=code
+		// &client_id=${REST_API_KEY}
+		// &redirect_uri=${REDIRECT_URI}
+		String state = UUID.randomUUID().toString();
+		session.setAttribute("state", state);
+
+		StringBuffer url = new StringBuffer("https://kauth.kakao.com/oauth/authorize?response_type=code");
+		url.append("&client_id=").append(KAKAO_ID);
+
+		url.append("&redirect_uri=").append(common.appURL(request)).append("/member/kakaoCallback");
+		return "redirect:" + url.toString();
+	}
+
+//		네이티브 앱 키	efcc6b00dbfd59b15528cb3685843a34
+//		REST API 키	2b5d34b73ad483e217c0e8749002b234
+//		JavaScript 키	763b2f25e869323e2defa8db23b8b900
+//		Admin 키	90032db7806d2a705ee0fde9b66da743
+
+	// 카카오로그인 콜백처리
+	@RequestMapping("/kakaoCallback")
+	public String kakaoCallback(String code, HttpSession session) {
+		if (code == null)
+			return "redirect:/";
+
+		StringBuffer url = new StringBuffer("https://kauth.kakao.com/oauth/token?");
+		url.append("grant_type=authorization_code");
+		url.append("&client_id=").append(KAKAO_ID);
+		url.append("&code=").append(code);
+
+		String kacall = common.requestAPI(url.toString());
+		JSONObject json = new JSONObject(kacall);
+		String token = json.getString("access_token");
+		String type = json.getString("token_type");
+
+		// 접근 토큰을 이용하여 프로필 API 호출하기
+
+		url = new StringBuffer("https://kapi.kakao.com/v2/user/me");
+		kacall = common.requestAPI(url.toString(), type + " " + token);
+		json = new JSONObject(kacall);
+
+		MemberVO vo = new MemberVO();
+		vo.setSocial("K");
+		vo.setUserid(json.get("id").toString());
+		// 별칭 이 있으면 별칭을, 없으면 name필드에 담자
+		JSONObject kakao = json.getJSONObject("kakao_account");
+		JSONObject kaka = kakao.getJSONObject("profile");
+		vo.setName(hasKey(kaka, "nickname"));
+		if (vo.getName().isEmpty()) {
+			vo.setName(hasKey(kakao, "name", "아무개"));
+		}
+		vo.setEmail(hasKey(kakao, "email"));
+
+//				vo.setProfile(hasKey(kaka,"nickname"));
+		vo.setProfile(hasKey(kaka, "thumbnail_image_url"));
+		vo.setGender(hasKey(kakao, "gender", "male").equals("male") ? "남" : "여"); // M/F -->남/여
+		vo.setPhone(hasKey(kakao, "phone_number"));
+
+		if (service.member_info(vo.getUserid()) == null) {
+			service.member_join(vo);
+		} else {
+			service.member_update(vo);
+		}
+		session.setAttribute("loginInfo", vo);
+		return "redirect:/";
+	}
+
+	// 네이버로그인처리 요청
+	@RequestMapping("/naverLogin")
+	public String naverlogin(HttpSession session, HttpServletRequest request) {
+		// 네이버 로그인 연동 URL 생성하기
+
+		// https://nid.naver.com/oauth2.0/authorize?response_type=code
+		// &client_id=CLIENT_ID
+		// &state=STATE_STRING
+		// &redirect_uri=CALLBACK_URL
+		String state = UUID.randomUUID().toString();
+		session.setAttribute("state", state);
+
+		StringBuffer url = new StringBuffer("https://nid.naver.com/oauth2.0/authorize?response_type=code");
+		url.append("&client_id=").append(NAVER_ID);
+		url.append("&state=").append(state);
+		url.append("&redirect_uri=").append(common.appURL(request)).append("/member/naverCallback");
+		// http://localhost:8080/smart
+		return "redirect:" + url.toString();
+	}
+
+	// 네이버 콜백처리
+	@RequestMapping("/naverCallback")
+	public String naverCallback(String code, String state, HttpSession session) {
+		String storedState = (String) session.getAttribute("state");
+		if (code == null || !state.equals(storedState))
+			return "redirect:/";
+
+		// 접근 토큰 발급 요청
+		// https://nid.naver.com/oauth2.0/token?grant_type=authorization_code
+		// &client_id=jyvqXeaVOVmV
+		// &client_secret=527300A0_COq1_XV33cf
+		// &code=EIc5bFrl4RibFls1
+		// &state=9kgsGTfH4j7IyAkg
+		StringBuffer url = new StringBuffer("https://nid.naver.com/oauth2.0/token?grant_type=authorization_code");
+		url.append("&client_id=").append(NAVER_ID);
+		url.append("&client_secret=").append(NAVER_SECRET);
+		url.append("&code=").append(code);
+		url.append("&state=").append(state);
+
+		String response = common.requestAPI(url.toString());
+		// 문자열 --> JSON
+		JSONObject json = new JSONObject(response);
+		String token = json.getString("access_token");
+		String type = json.getString("token_type");
+
+		// 접근 토큰을 이용하여 프로필 API 호출하기
+
+		url = new StringBuffer("https://openapi.naver.com/v1/nid/me");
+		response = common.requestAPI(url.toString(), type + " " + token);
+		json = new JSONObject(response);
+		if (json.getString("resultcode").equals("00")) {
+			json = json.getJSONObject("response");
+			MemberVO vo = new MemberVO();
+			vo.setSocial("N");
+			vo.setUserid(json.getString("id"));
+			// 별칭 이 있으면 별칭을, 없으면 name필드에 담자
+			vo.setName(hasKey(json, "nickname"));
+			if (vo.getName().isEmpty()) {
+				vo.setName(hasKey(json, "name", "아무개"));
+			}
+			vo.setEmail(hasKey(json, "email"));
+			vo.setProfile(hasKey(json, "profile_image"));
+			vo.setGender(hasKey(json, "gender", "M").equals("M") ? "남" : "여"); // M/F -->남/여
+			vo.setPhone(hasKey(json, "mobile"));
+
+			// DB에 네이버로그인 정보 저장하기 - 존재여부를 확인하여 신규/변경 저장
+			if (service.member_info(vo.getUserid()) == null) {
+				service.member_join(vo);
+			} else {
+				service.member_update(vo);
+			}
+			session.setAttribute("loginInfo", vo);
+
+		}
+
+		/*
+		 * { "resultcode": "00", "message": "success", "response": { "email":
+		 * "openapi@naver.com", "nickname": "OpenAPI", "profile_image":
+		 * "https://ssl.pstatic.net/static/pwe/address/nodata_33x33.gif", "age":
+		 * "40-49", "gender": "F", "id": "32742776", "name": "오픈 API", "birthday":
+		 * "10-01" } }
+		 */
+
+		return "redirect:/";
+	}
+
+	private String hasKey(JSONObject json, String key) {
+		return json.has(key) ? json.getString(key) : "";
+	}
+
+	// 기본값을 지정해야 하는 경우
+	private String hasKey(JSONObject json, String key, String value) {
+		return json.has(key) ? json.getString(key) : value;
 	}
 
 	// 로그인처리 요청

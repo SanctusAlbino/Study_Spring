@@ -14,3 +14,16 @@ table.tb-row tr {height:60px}
 table.tb-list th, table.tb-list td {text-align: center;}
 
 a.text-link:hover {color: #0d6efd; text-decoration: underline;}
+
+.profile {width: 38px; height: 38px; border-radius: 50%}
+.font-profile{font-size: 38px;}
+
+.date+.date-delete {position: relative; right:34px; display:none;}
+
+input[type=file]{display:none} /* 기본파일태그는 안보이게 */
+.file-preview img {max-height: 38px; }
+
+
+.w-px100 {width: 100px;}
+.w-px90 {width: 90px;}
+.w-px80 {width: 80px;}

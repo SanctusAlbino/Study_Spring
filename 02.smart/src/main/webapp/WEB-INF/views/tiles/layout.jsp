@@ -8,6 +8,7 @@
 	<c:when test="${category eq 'bo' }"> <c:set var="title" value="방명록"/> </c:when>
 	<c:when test="${category eq 'da' }"> <c:set var="title" value="공공데이터"/> </c:when>
 	<c:when test="${category eq 'vi' }"> <c:set var="title" value="시각화"/> </c:when>
+	<c:when test="${category eq 'join' }"> <c:set var="title" value="회원가입"/> </c:when>
 </c:choose>
 
 
@@ -68,21 +69,38 @@
                                 <c:if test="${empty loginInfo}">
                                 <li class="nav-item"><a class="nav-link" href="<c:url value='/member/login'/>">로그인</a>
                                 </li>
-                                <li class="nav-item"><a class="nav-link" href="">회원가입</a>
+                                <li class="nav-item"><a class="nav-link" href="<c:url value='/member/join'/>">회원가입</a>
                                 </li>
                                 </c:if>
                                 
-                                
+                               
                                 <!--로그인된 경우  -->
                                 <c:if test="${!empty loginInfo}">
+                                
+                                <li class="nav-item">
+                                <c:choose>
+                                	<c:when test="${empty loginInfo.profile}">
+                                <i class="font-profile fa-thin fa-user"></i>
+                                </c:when>
+                                <c:otherwise>
+                                <img class="profile" src="${loginInfo.profile }">
+                                </c:otherwise>
+                                </c:choose>
+                                </li>
+                                
+                                
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" 
                                     aria-expanded="false">${loginInfo.name}</a>
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    
+                                    	<c:if test="${empty loginInfo.social}">
+                                    	
                                         <a class="dropdown-item" >아이디: ${loginInfo.userid}</a>
                                         <a class="dropdown-item" href="">My Page</a>
                                         <a class="dropdown-item" href="<c:url value ='/member/changePassword'/>">비밀번호 변경</a>
                                         <div class="dropdown-divider"></div>
+                                        </c:if>
                                         <a class="dropdown-item" href="<c:url value='/member/logout'/>">로그아웃</a>
                                     </div>
                                 </li></c:if> 

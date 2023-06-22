@@ -1,14 +1,46 @@
 package smart.common;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.UUID;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.mail.HtmlEmail;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import smart.member.MemberVO;
 
 @Service
 public class CommonUtility {
+	
+	//파일업로드
+	public String fileUpload(String category, MultipartFile file, HttpServletRequest request) {
+		//D:\Study_Spring\workspace\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\02.smart\resources
+		String path = request.getSession().getServletContext().getRealPath("resources");
+		//String upload ="/upload/profile/2023/06/22/abc.png";
+		String upload ="/upload/"+category+
+				new SimpleDateFormat("/yyyy/MM/dd").format(new Date());
+		path += upload;
+		//파일을 저장해둘 폴더가 없으면 폴더 만들기
+		File folder = new File( path);
+		if( !folder.exists())folder.mkdirs();
+		
+		String filename = UUID.randomUUID().toString()+"_"+ file.getOriginalFilename();
+		try {
+			file.transferTo( new File(path, filename));			
+		}catch(Exception e) {
+			
+		}
+		return appURL(request) + upload + "/" + filename;
+	}
+	
 	
 	private void emailServerConnect(HtmlEmail email) {
 		email.setHostName("smtp.naver.com"); //메일 서버 지정..
@@ -49,6 +81,69 @@ public class CommonUtility {
 		}
 		return send;
 	}
+	
+	//API 요청
+	public String requestAPI(String apiURL) {
+		String response = "";
+		 try {
+		      URL url = new URL(apiURL);
+		      HttpURLConnection con = (HttpURLConnection)url.openConnection();
+		      con.setRequestMethod("GET");
+		      int responseCode = con.getResponseCode();
+		      BufferedReader br;
+		      System.out.print("responseCode="+responseCode);
+		      if(responseCode==200) { // 정상 호출
+		        br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
+		      } else {  // 에러 발생
+		        br = new BufferedReader(new InputStreamReader(con.getErrorStream(), "utf-8"));
+		      }
+		      String inputLine;
+		      StringBuffer res = new StringBuffer();
+		      while ((inputLine = br.readLine()) != null) {
+		        res.append(inputLine);
+		      }
+		      br.close();
+		      response = res.toString();
+		    } catch (Exception e) {
+		      System.out.println(e);
+		    }
+		 
+		 return response;
+	}
+	
+	//API 요청
+		public String requestAPI(String apiURL, String property) {
+			String response = "";
+			 try {
+			      URL url = new URL(apiURL);
+			      HttpURLConnection con = (HttpURLConnection)url.openConnection();
+			      con.setRequestMethod("GET");
+			      //Authorization : {토큰타입]{접근토큰]
+			      con.setRequestProperty("Authorization", property);
+			      int responseCode = con.getResponseCode();
+			      BufferedReader br;
+			      System.out.print("responseCode="+responseCode);
+			      if(responseCode==200) { // 정상 호출
+			        br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
+			      } else {  // 에러 발생
+			        br = new BufferedReader(new InputStreamReader(con.getErrorStream(), "utf-8"));
+			      }
+			      String inputLine;
+			      StringBuffer res = new StringBuffer();
+			      while ((inputLine = br.readLine()) != null) {
+			        res.append(inputLine);
+			      }
+			      br.close();
+			      response = res.toString();
+			    } catch (Exception e) {
+			      System.out.println(e);
+			    }
+			 
+			 return response;
+		}
+	
+	
+	
 	
 	
 // context root url 지정
