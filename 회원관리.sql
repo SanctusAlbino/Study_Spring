@@ -12,5 +12,10 @@ post        varchar2(5), /*우편번호*/
 address     varchar2(300), /*주소*/
 admin       varchar2(1) default 'N' /*관리자여부:Y/N*/
 );
+--소셜구분 컬럼 추가
+alter table member add (social varchar2(1));
+--소셜로그인 경우 userpw정보가 없고 email가 없을수도 있다
+alter table member modify(userpw null, email null);
+
 select * from member;
 delete from member;
