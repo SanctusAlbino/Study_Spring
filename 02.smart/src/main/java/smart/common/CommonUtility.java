@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.HtmlEmail;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,7 +24,10 @@ public class CommonUtility {
 	//파일업로드
 	public String fileUpload(String category, MultipartFile file, HttpServletRequest request) {
 		//D:\Study_Spring\workspace\.metadata\.plugins\org.eclipse.wst.server.core\tmp0\wtpwebapps\02.smart\resources
-		String path = request.getSession().getServletContext().getRealPath("resources");
+		// d:\\app\smart
+		String path = "D:\\app\\"+request.getContextPath(); // /smart
+		
+		//String path = request.getSession().getServletContext().getRealPath("resources");
 		//String upload ="/upload/profile/2023/06/22/abc.png";
 		String upload ="/upload/"+category+
 				new SimpleDateFormat("/yyyy/MM/dd").format(new Date());
@@ -38,6 +42,7 @@ public class CommonUtility {
 		}catch(Exception e) {
 			
 		}
+		//http://localhost:8080/smart/upload/profile/2023/06/22/abc.png
 		return appURL(request) + upload + "/" + filename;
 	}
 	
@@ -52,7 +57,43 @@ public class CommonUtility {
 	
 	private String EMAIL_ADDRESS="ghk1998@naver.com";
 	
-	// 이메일 보내기
+	// 이메일 보내기: 회원가입 축하메시지 전송
+	public void sendWelcome(MemberVO vo, String welcomeFile) {
+		HtmlEmail email = new HtmlEmail();
+		email.setCharset("utf-8");
+		email.setDebug(true);
+		
+		//이메일 서버 지정.
+		emailServerConnect(email);
+		try{
+			email.setFrom(EMAIL_ADDRESS, "스마트 웹&액 권리자 ");
+			email.addTo(vo.getEmail(), vo.getName() );
+			email.setSubject("한울 스마트 웹&엑 과정 가입 축하한당");
+			
+			StringBuffer content = new StringBuffer();
+			content.append("<body>");
+			content.append("<h3><a target='_blank' href='https://www.naver.com'>한울 스마트 웹&앱 과정 </a></h3>");
+			content.append("<div>우리 과정 가입은 축하하나 어려울꺼에요</div>");
+			content.append("<div>껄껄껄</div>");
+			content.append("<div>첨부된 파일을 확인하신후 후회 없는 선택학시길....</div>");
+			content.append("<div>낄낄</div>");
+			content.append("</body>");
+			email.setHtmlMsg(content.toString());
+			
+			EmailAttachment file = new EmailAttachment();
+			file.setPath(welcomeFile);//파일선택
+			email.attach(file); //선택한파일 첨부
+			
+			email.send(); //메일 보내기 버튼 클릭
+			
+		}catch(Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	
+	
+	// 이메일 보내기: 임시비번전송
 	public boolean sendPassword(MemberVO vo, String pw) {
 		boolean send = true;
 		HtmlEmail email = new HtmlEmail();
