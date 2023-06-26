@@ -34,7 +34,12 @@
 		$('input[type=file]').val('');//첨부되어 있던 이미지파일 없애기
 		var _preview = $('#file-attach .file-preview');
 		if(_preview.length > 0 ) _preview.empty(); //미리보기한 이미지 없애기
+		
+		var _name = $('#file-attach .file-name'); //파일명 태그
+		if(_name.length > 0 ) _name.empty();	//파일명 없애기
 		console.log('2> ', $('#file-single').val())
+		console.log('파일정보> ', $('[type=file]').val())
+		
 	})
  
  //파일이 이미지파일인지 확인
@@ -45,6 +50,16 @@
 	return imgs.indexOf(ext)== -1 ? false : true;
 }
  
+ //첨부파일 크기 제한 함수
+ function rejectedFile(fileInfo, tag){
+	// 1024 byte = lkb, lMb=1024*1024 byte, ...
+	if(fileInfo.size > 1024*1024*10){
+		alert("10Mb 를 넘는 파일은 첨부할 수 없습니다.!!!!!");
+		tag.val('');
+		return true;
+	}else
+		return false;
+}
  
  $( function() {
 	//프로필 이미지 선택처리
@@ -52,16 +67,23 @@
 		console.log($(this))
 		console.log(this.files)
 		
-		var _preview = $('#file-attach .file-preview');
-		var _delete = $('#file-attach .file-delete');
+		var _preview = $('#file-attach .file-preview'); //이미지 미리보기요소
+		var _delete = $('#file-attach .file-delete'); //파일삭제요소
+		var _name = $('#file-attach .file-name'); //파일명 요소
+		
 		
 		var attached = this.files[0];
 		console.log(attached)
 		if(attached){
+			//파일 사이즈 제한
+			if(rejectedFile(attached, $(this))) return;
+			//파일명 보여지게
+			if( _name.length>0)  _name.text( attached.name);
+				_delete.removeClass('d-none'); //삭제버튼 보이게
+			
 			//이미지파일인지 확인
 			if(isImage(attached.name)){
 				singleFile = attached; //선택한 파일정보를 관리
-				_delete.removeClass('d-none'); //삭제버튼 보이게
 				// 미리보기 태그가 있을때만 
 				if( _preview.length > 0 ){
 					_preview.html( "<img>" );
@@ -75,11 +97,15 @@
 					
 				}
 			}else{
-				singleFile = ''; //이미지가 아닌 파일인 경우는 관리정보를 초기화
 				//이전 선택했던 이미지파일 처리
 				_preview.empty();
-				$(this).val('');	//실제file 태그의 정보 초기화
-				_delete.addClass('d-none'); //삭제버튼 안 보이게
+				
+				if($(this).hasClass("image-only")){
+					
+					singleFile = ''; //이미지가 아닌 파일인 경우는 관리정보를 초기화
+					$(this).val('');	//실제file 태그의 정보 초기화
+					_delete.addClass('d-none'); //삭제버튼 안 보이게
+				}
 			}
 			
 		}else{
@@ -116,6 +142,20 @@
     $( ".date" ).attr('readonly',true);
     
   } );
+  
+  //입력항목 입력 여부 
+  function emptyCheck(){
+	var ok = true;
+	$('.check-empty').each(function(){
+		if($(this).val()==""){
+			alert($(this).attr('title')+"입력하세요");
+			$(this).focus();
+			ok = false;
+			return ok;
+		}
+	})
+	return ok;
+}
   
   function toPhone(tag){
 	//02-1234-1234 010-1234-1234

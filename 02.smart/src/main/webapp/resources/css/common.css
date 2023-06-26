@@ -1,7 +1,7 @@
 @charset "UTF-8";
 
 a { color: initial}
-a:link, a:hover {text-decoration: none; color: inherit;}
+a:not(.btn):link, a:hover {text-decoration: none; color: inherit;}
 
 table{width:100%; border-top: 2px solid #666; color: #666;}
 table th, table td {border-right: 1px solid #ddd; 
@@ -23,6 +23,7 @@ a.text-link:hover {color: #0d6efd; text-decoration: underline;}
 input[type=file]{display:none} /* 기본파일태그는 안보이게 */
 .file-preview img {max-height: 38px; }
 
+textarea.form-control {height:400px; resize:none;}
 
 .w-px100 {width: 100px;}
 .w-px90 {width: 90px;}

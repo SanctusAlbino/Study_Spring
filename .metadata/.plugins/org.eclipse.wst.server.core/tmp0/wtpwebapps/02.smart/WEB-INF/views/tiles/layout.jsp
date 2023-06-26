@@ -38,7 +38,7 @@
         
     </head>
     <body>
-        <div class="d-flex" id="wrapper">
+     <div class="d-flex" id="wrapper">
             <!-- Sidebar-->
             <div class="border-end bg-white" id="sidebar-wrapper">
                 <div class="sidebar-heading border-bottom bg-light">
@@ -50,7 +50,7 @@
                 <div class="list-group list-group-flush">
                     <a class="${category eq 'cu' ? 'active':''} list-group-item list-group-item-action list-group-item-light p-3" href="<c:url value='/list.cu'/>">고객관리</a>
                     <a class="${category eq 'hr' ? 'active':''} list-group-item list-group-item-action list-group-item-light p-3" href="<c:url value='/hr/list'/>">사원관리</a>
-                    <a class="${category eq 'no' ? 'active':''} list-group-item list-group-item-action list-group-item-light p-3" href="#!">공지사항</a>
+                    <a class="${category eq 'no' ? 'active':''} list-group-item list-group-item-action list-group-item-light p-3" href="<c:url value='/notice/list'/>">공지사항</a>
                     <a class="${category eq 'bo' ? 'active':''} list-group-item list-group-item-action list-group-item-light p-3" href="#!">방명록</a>
                     <a class="${category eq 'da' ? 'active':''} list-group-item list-group-item-action list-group-item-light p-3" href="#!">공공데이터</a>
                     <a class="${category eq 'vi' ? 'active':''} list-group-item list-group-item-action list-group-item-light p-3" href="#!">시각화</a>
@@ -58,12 +58,12 @@
             </div>
             <!-- Page content wrapper-->
             <div id="page-content-wrapper">
-                <!-- Top navigation-->
+             <!-- Top navigation-->
                 <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
                     <div class="container-fluid">
                         <button class="btn btn-primary" id="sidebarToggle">Toggle Menu</button>
                         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                		<div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
                                 <!--로그인 안 된 경우  -->
                                 <c:if test="${empty loginInfo}">
@@ -72,9 +72,7 @@
                                 <li class="nav-item"><a class="nav-link" href="<c:url value='/member/join'/>">회원가입</a>
                                 </li>
                                 </c:if>
-                                
-                               
-                                <!--로그인된 경우  -->
+                                 <!--로그인된 경우  -->
                                 <c:if test="${!empty loginInfo}">
                                 
                                 <li class="nav-item">
@@ -87,9 +85,7 @@
                                 </c:otherwise>
                                 </c:choose>
                                 </li>
-                                
-                                
-                                <li class="nav-item dropdown">
+                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" 
                                     aria-expanded="false">${loginInfo.name}</a>
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
@@ -103,24 +99,26 @@
                                         </c:if>
                                         <a class="dropdown-item" href="<c:url value='/member/logout'/>">로그아웃</a>
                                     </div>
-                                </li></c:if> 
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
-                <!-- Page content-->
+                                </li>
+                                </c:if>
+                       		</ul>
+                        </div>        
+                	</div>
+                	
+                </nav>	
+                  <!-- Page content-->
                 <div class="container-fluid">
                     <tiles:insertAttribute name="container"/>
                 </div>
                 <footer class="border-top py-4 mt-4 text-center">
                 	<div>Copyright &copy; My Website 2023</div>
-                </footer>
+                </footer>      
             </div>
-        </div>
-        <!-- Bootstrap core JS-->
+     </div>
+     <!-- Bootstrap core JS-->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Core theme JS-->
         <script src="<c:url value='/js/scripts.js'/>"></script>
         <%-- <c:url value="js/scripts.js"/></c:url> --%>
-    </body> 
+        </body> 
 </html>

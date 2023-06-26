@@ -95,7 +95,7 @@ table th span { margin-right: 5px; color: red;}
 	<td><div class="row">
 			<div class="col-auto d-flex gap-3 align-items-center">
 			<label>
-				<input type="file", name='file' id="file-single" class="form-control image-only" accept="image/*">
+				<input type="file" name='file' id="file-single" class="form-control image-only" accept="image/*">
 				
 				<a class="btn btn-secondary btn-sm"><i class="fa-regular fa-address-card me-2"></i>프로필</a>
 			</label>
@@ -158,6 +158,10 @@ table th span { margin-right: 5px; color: red;}
 <script>
 //회원가입 버튼 클릭시
 $('#btn_join').on('click', function(){
+	
+	
+	
+	
 	if( $("[name=name]").val().trim() == ""){
 		alert("회원명을 입력하세요!");
 		$("[name=name]").focus();
@@ -191,9 +195,23 @@ $('#btn_join').on('click', function(){
 	if( invalidStatus($("[name=userpw_ck]"))) return;
 	if( invalidStatus($("[name=email]"))) return;
 	
+	singleFileUpload();
 	$('form').submit()
 	
 })
+
+function singleFileUpload(){
+	if(singleFile !=""){
+		var transfer = new DataTransfer();
+		transfer.items.add( singleFile);
+		//화면 태그 속성: attr : 기본에 해당, 나중에 속성추가지정: prop
+		$('input[type=file]').prop('files', transfer.files);
+		
+		//console.log($('input[type=file]').val())
+	}	
+}
+
+
 
 //체크항목에 입력을 유효하게 했는지 확인
 function invalidStatus(tag){
