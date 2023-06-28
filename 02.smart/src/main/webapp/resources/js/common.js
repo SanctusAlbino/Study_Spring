@@ -1,6 +1,19 @@
 /**
  * 공통함수선언
  */
+ //파일첨부 정보 file태그에 담기
+ var singleFile = ''; //파일선택시 선택한 첨부파일정보를 담아둘 변수
+ function singleFileUpload(){
+	if(singleFile !=""){
+		var transfer = new DataTransfer();
+		transfer.items.add( singleFile);
+		//화면 태그 속성: attr : 기본에 해당, 나중에 속성추가지정: prop
+		$('input[type=file]').prop('files', transfer.files);
+		
+		//console.log($('input[type=file]').val())
+	}	
+}
+ 
  
  function modalAlert(type, title, message){
 	$('#modal-alert .modal-title').html(title);
@@ -39,6 +52,14 @@
 		if(_name.length > 0 ) _name.empty();	//파일명 없애기
 		console.log('2> ', $('#file-single').val())
 		console.log('파일정보> ', $('[type=file]').val())
+		
+	})
+	.on('click', '.file-preview img', function(){
+		// 미리보기 이미지 클릭시 크게보이게
+		if($('#modal-image').length == 1){
+			$('.modal-body').html($(this).clone() );
+			new bootstrap.Modal( $('#modal-image')).show()
+		}
 		
 	})
  
@@ -87,15 +108,21 @@
 				// 미리보기 태그가 있을때만 
 				if( _preview.length > 0 ){
 					_preview.html( "<img>" );
+				}else{
+					//첨부파일이 이미지인데, 미리보기 요소가 없으면 동적으로 만들어 보이게 처리
+					//삭제버튼 앞에 넣기
+					_delete.before("<span class='file-preview'><img></span>");
+					_preview = $( '#file-attach .file-preview')
+				}
 					
-					var reader = new FileReader();
-					reader.readAsDataURL( attached );
-					reader.onload = function(e){
+				var reader = new FileReader();
+				reader.readAsDataURL( attached );
+				reader.onload = function(e){
 	//					_preview.children("img").attr("src",this.result );
-						_preview.children("img").attr("src",e.target.result );
+					_preview.children("img").attr("src",e.target.result );
 					}
 					
-				}
+				
 			}else{
 				//이전 선택했던 이미지파일 처리
 				_preview.empty();

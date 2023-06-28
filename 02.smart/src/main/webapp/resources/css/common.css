@@ -1,6 +1,6 @@
 @charset "UTF-8";
 
-a { color: initial}
+a { color: inherit}
 a:not(.btn):link, a:hover {text-decoration: none; color: inherit;}
 
 table{width:100%; border-top: 2px solid #666; color: #666;}
@@ -24,6 +24,8 @@ input[type=file]{display:none} /* 기본파일태그는 안보이게 */
 .file-preview img {max-height: 38px; }
 
 textarea.form-control {height:400px; resize:none;}
+
+#modal-image .modal-body img{width: 100%}
 
 .w-px100 {width: 100px;}
 .w-px90 {width: 90px;}

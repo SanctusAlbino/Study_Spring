@@ -2,6 +2,8 @@ package kr.co.smart;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +11,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
 
+import smart.common.CommonUtility;
+import smart.common.PageVO;
 import smart.member.MemberDAO;
 import smart.member.MemberVO;
 import smart.notice.NoticeDAO;
@@ -19,9 +24,100 @@ import smart.notice.NoticeVO;
 public class NoticeController {
 	@Autowired private NoticeDAO service;
 	
+	@Autowired private CommonUtility common;
+	
+	//공지글정보 수정 저장처리 요청
+	@RequestMapping("/update")
+	public String update(NoticeVO vo, MultipartFile file, HttpServletRequest request) {
+		//원래 첨부되어져 있던 파일정보를 조회해둔다.
+		NoticeVO before = service.notice_info(vo.getId());
+		
+		if(file.isEmpty()) {
+		//첨부파일이 없는 경우: 원래O -> 삭제, 원래O,X ->그대로 두는경우 
+		//원래O 그대로 두는 경우 -> 파일명 이전정보로 담아두어야 한다.
+			if(!vo.getFilename().isEmpty()) {
+				vo.setFilename(before.getFilename());
+				vo.setFilepath(before.getFilepath());
+			}
+			
+		}else {
+		//첨부파일이 있는 경우
+		//원래O,X -> 첨부파일 업로드
+			vo.setFilename(file.getOriginalFilename());
+			vo.setFilepath(common.fileUpload("notice", file, request));
+		}
+		//화면에서 변경입력한 정보로 DB에 변경저장한 후 응답화면연결 - 정보화면
+		if(service.notice_update(vo)==1) {
+			//물리적 파일 삭제 처리
+			if(file.isEmpty()) {
+				//원래O 화면에서 삭제한 경우
+				if(vo.getFilename().isEmpty()) {
+					common.deletedFile(before.getFilepath(), request);
+				}
+				
+			}else {
+				//원래O 바꿔서 첨부한 경우
+				common.deletedFile(before.getFilepath(), request);
+			}
+				
+		}
+		
+		return "redirect:info?id="+ vo.getId();
+	}
+	
+	//공지글정보 수정 화면 요청
+	@RequestMapping("/modify")
+	public String modify(int id, Model model) {
+		//해당 글의 정보를 DB에서 조회해와 수정화면에 출력할 수 있도록 Model에 담는다.
+		model.addAttribute("vo", service.notice_info(id));
+		return "notice/modify";
+	}
+	
+	
+	//공지글 정보 삭제처리 요청
+	@RequestMapping("/delete")
+	public String delete(int id, HttpServletRequest request) {
+		//첨부파일이 있는 경우 물리적인 파일을 찾아 삭제할 수 있도록 파일 정보를 조회해둔다.
+		NoticeVO vo = service.notice_info(id);
+		//해당 공지글을 DB에서 삭제한다. 응답화면 - 목록화면
+		if(service.notice_delete(id)==1) {
+			common.deletedFile(vo.getFilepath(), request);
+		}
+		
+		return "redirect:list";
+	}
+	
+	//공지글 첨부파일 다운로드처리 요청
+	@RequestMapping("/download")
+	public void download(int id, HttpServletRequest req, HttpServletResponse res) throws Exception {
+		//해당 글의 첨부파일 정보를 조회해와 서버로 부터 파일정보를 찾고 
+		//클라이언트에 다운로드 처리
+		NoticeVO vo = service.notice_info(id);
+		common.fileDownload(vo.getFilename(), vo.getFilepath(), req, res);
+		
+	}
+	
+	//신규 공지글 등록 처리 요청
+	@RequestMapping("/info")
+	public String info(int id, Model model) {
+		//조회수 증가처리
+		service.notice_read(id);
+		
+		//선택한 공지글 정보를 DB에서 조회해와 화면에 출력할 수있도록 Model에 attribute로 담는다.
+		model.addAttribute("crlf", "\r\n"); //carrage return line feed
+		model.addAttribute("lf", "\n"); //line feed		
+		model.addAttribute("vo", service.notice_info(id)); 
+		return "notice/info";
+	}
+	
 	//신규 공지글 등록 처리 요청
 	@RequestMapping("/register")
-	public String register(NoticeVO vo) {
+	public String register(NoticeVO vo, MultipartFile file, HttpServletRequest request) {
+		//첨부한 파일이 있는 경우
+		if(! file.isEmpty()) {
+			vo.setFilename(file.getOriginalFilename());
+			vo.setFilepath(common.fileUpload("notice", file, request));
+		}
 		//화면에 입력한 정보로 DB에 신규저장
 		service.notice_regist(vo);
 		//응답화면 연결 - 목록
@@ -39,7 +135,7 @@ public class NoticeController {
 	
 	//공지글 목록 화면 요청
 	@RequestMapping("/list")
-	public String list(Model model, HttpSession session) {
+	public String list(Model model, HttpSession session, PageVO page) {
 		// 임시 로그인 처리(테스트 후 삭제/주석)---------
 		String userid = "admin";
 		String userpw = "manager";
@@ -52,9 +148,11 @@ public class NoticeController {
 		
 		session.setAttribute("category", "no");
 		//DB에서 공지글 목록을 조회해와 목록화면에 출력할 수 있도록 
-		List<NoticeVO> list = service.notice_list();
+		//List<NoticeVO> list = service.notice_list();
 		// Model에 담는다.
-		model.addAttribute("list",list);
+		//model.addAttribute("list",list);
+		//model.addAttribute("list",service.notice_list());
+		model.addAttribute("page",service.notice_list(page));
 		return "notice/list";
 	}
 	
