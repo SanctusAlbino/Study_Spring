@@ -1,5 +1,7 @@
 package kr.co.smart;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +30,7 @@ public class NoticeController {
 	
 	//공지글정보 수정 저장처리 요청
 	@RequestMapping("/update")
-	public String update(NoticeVO vo, MultipartFile file, HttpServletRequest request) {
+	public String update(NoticeVO vo, MultipartFile file, HttpServletRequest request, PageVO page) throws UnsupportedEncodingException {
 		//원래 첨부되어져 있던 파일정보를 조회해둔다.
 		NoticeVO before = service.notice_info(vo.getId());
 		
@@ -62,21 +64,28 @@ public class NoticeController {
 				
 		}
 		
-		return "redirect:info?id="+ vo.getId();
+		return "redirect:info?id="+ vo.getId()
+				+ "&curPage=" + page.getCurPage()
+				+ "&search=" + page.getSearch()
+				+ "&keyword=" + URLEncoder.encode(page.getKeyword(), "utf-8")
+				;
+		
+		
 	}
 	
 	//공지글정보 수정 화면 요청
 	@RequestMapping("/modify")
-	public String modify(int id, Model model) {
+	public String modify(int id, Model model, PageVO page) {
 		//해당 글의 정보를 DB에서 조회해와 수정화면에 출력할 수 있도록 Model에 담는다.
 		model.addAttribute("vo", service.notice_info(id));
+		model.addAttribute("page", page);
 		return "notice/modify";
 	}
 	
 	
 	//공지글 정보 삭제처리 요청
 	@RequestMapping("/delete")
-	public String delete(int id, HttpServletRequest request) {
+	public String delete(int id, HttpServletRequest request, PageVO page) throws Exception {
 		//첨부파일이 있는 경우 물리적인 파일을 찾아 삭제할 수 있도록 파일 정보를 조회해둔다.
 		NoticeVO vo = service.notice_info(id);
 		//해당 공지글을 DB에서 삭제한다. 응답화면 - 목록화면
@@ -84,7 +93,11 @@ public class NoticeController {
 			common.deletedFile(vo.getFilepath(), request);
 		}
 		
-		return "redirect:list";
+		return "redirect:list?"
+				+ "curPage=" +page.getCurPage()
+				+ "&search=" +page.getSearch()
+				+ "&keyword=" +URLEncoder.encode(page.getKeyword(), "utf-8")
+				;
 	}
 	
 	//공지글 첨부파일 다운로드처리 요청
@@ -95,18 +108,19 @@ public class NoticeController {
 		NoticeVO vo = service.notice_info(id);
 		common.fileDownload(vo.getFilename(), vo.getFilepath(), req, res);
 		
-	}
+	} 
 	
-	//신규 공지글 등록 처리 요청
+	//공지글 정보 화면 요청
 	@RequestMapping("/info")
-	public String info(int id, Model model) {
+	public String info(int id, Model model, PageVO page) {
 		//조회수 증가처리
 		service.notice_read(id);
 		
 		//선택한 공지글 정보를 DB에서 조회해와 화면에 출력할 수있도록 Model에 attribute로 담는다.
 		model.addAttribute("crlf", "\r\n"); //carrage return line feed
 		model.addAttribute("lf", "\n"); //line feed		
-		model.addAttribute("vo", service.notice_info(id)); 
+		model.addAttribute("vo", service.notice_info(id));
+		model.addAttribute("page", page);
 		return "notice/info";
 	}
 	
@@ -128,7 +142,7 @@ public class NoticeController {
 	@RequestMapping("/new")
 	public String regist() {
 		return "notice/new";
-	}
+	} 
 	
 	@Autowired private MemberDAO member;
 	@Autowired private BCryptPasswordEncoder pw;

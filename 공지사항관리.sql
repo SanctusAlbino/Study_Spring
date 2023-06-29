@@ -10,9 +10,24 @@ writedate   date default sysdate /*작성일자*/,
 readcnt     number default 0 /*조회수*/,
 filename    varchar2(300) /*첨부파일명*/,
 filepath    varchar2(600) /*첨부파일 경로*/ ,
+root        number /*답글관리를 위한 id*/,
+step        number default 0/*글 순서*/,
+indent      number default 0/*들여쓰기*/,
 constraint notice_writer_fk foreign key(writer)
                                 references member(userid) on delete cascade
 );
+
+alter table notice add(
+root        number /*답글관리를 위한 id*/,
+step        number default 0/*글 순서*/,
+indent      number default 0/*들여쓰기*/
+);
+
+select id, root, step, indent from notice
+order by id desc;
+
+update notice set root = id;
+commit;
 
 pk인 id 컬럼에 적용할 시퀀스 생성
 create sequence seq_notice
@@ -24,6 +39,14 @@ create or replace trigger trg_notice
     for each row 
 begin
     select seq_notice.nextval into :new.id from dual;
+    if( :new.root is null ) then
+        /*원글인 경우 root에 값을 넣기 위한 처리*/
+        select seq_notice.currval into :new.root from dual;
+    else
+        /*답글인 경우 순서를 위한 step변경처리*/
+        update notice set step = step + 1 
+        where root = :old.root and step > :old.step;
+    end if;
 end;
 /
 
@@ -78,4 +101,21 @@ from    (select row_number() over(order by id) no, n.*, name
 where no between 202 and 211
 order by no desc
 ;
+
+select count(*) content from notice
+where title like '%테스트%'
+;
+
+select * 
+from    (select row_number() over(order by id) no, n.*, name
+            from notice n inner join member m on n.writer = m.userid) n
+where no between 12 and 21
+order by no desc
+;
+
+select count(*) from notice
+where writer = 'admin' or writer='admin2'
+;
+
+//
 

@@ -53,7 +53,7 @@ public class NoticeDAO implements NoticeService {
 	@Override
 	public PageVO notice_list(PageVO page) {
 		//총 글의 건수 조회
-		page.setTotalList( sql.selectOne("notice.totalList"));
+		page.setTotalList( sql.selectOne("notice.totalList", page));
 		page.setList(sql.selectList("notice.list", page));
 		return page;
 	}
