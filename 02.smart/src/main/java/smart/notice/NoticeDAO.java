@@ -57,6 +57,10 @@ public class NoticeDAO implements NoticeService {
 		page.setList(sql.selectList("notice.list", page));
 		return page;
 	}
-
+	
+	@Override
+	public int notice_reply_regist(NoticeVO vo) {
+		return sql.insert("notice.replyRegister", vo);
+	}
 	
 }

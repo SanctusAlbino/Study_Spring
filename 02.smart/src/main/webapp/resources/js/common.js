@@ -1,6 +1,25 @@
 /**
  * 공통함수선언
  */
+ 
+ //파일관리 객체 생성자함수
+ function FileList(){
+	this.files = [];
+	
+	this.setFile= function(file){
+		this.files.push(file);
+	}
+	
+	this.getFile = function(){
+		return this.files;
+	}
+	
+	this.removeFile = function(i){
+		this.files.splice(i,1);
+	}
+}
+ 
+ 
  //파일첨부 정보 file태그에 담기
  var singleFile = ''; //파일선택시 선택한 첨부파일정보를 담아둘 변수
  function singleFileUpload(){

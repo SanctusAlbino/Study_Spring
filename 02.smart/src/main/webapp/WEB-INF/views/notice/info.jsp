@@ -8,7 +8,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-<h3 class="my-4">공지글안내</h3>
+<h3 class="my-4">${vo.indent eq 0 ? '공지글' : '답글'} 안내</h3>
 <table class="tb-row">
 <colgroup>
 	<col width="180px" /><col><col width="160px" /><col width="160px" />
@@ -50,9 +50,9 @@
 	<a class="btn btn-primary" href="list?${params}">공지글목록</a>
 	<!-- 관리자로 로그인 한 경우만 수정/삭제 가능 -->
 	<c:if test="${loginInfo.admin eq 'Y'}">
-	<a class="btn btn-primary" href="modify?id=${vo.id}&${params}">공지글수정</a>
+	<a class="btn btn-primary" href="modify?id=${vo.id}&${params}">${vo.indent eq 0 ? '공지글' : '답글'}수정</a>
 	<a class="btn btn-primary" 
-	href="javascript:if(confirm('이 공지글 삭제할것이냐???!!')) {location='delete?id=${vo.id}&${params}'}">공지글삭제</a>
+	href="javascript:if(confirm('이 공지글 삭제할것이냐???!!')) {location='delete?id=${vo.id}&${params}'}">${vo.indent eq 0 ? '공지글' : '답글'}삭제</a>
 	</c:if>
 	<!--로그인한 경우만 답글쓰기 가능  -->
 	<c:if test="${not empty loginInfo}">
