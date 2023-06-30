@@ -22,7 +22,17 @@ end;
 --방명록에 첨부하는 파일관리
 create table board_file(
 id          number constraint board_file_id_pk primary key,
-board_id    number constraint board_file_fk_references board(id) on delete cascade, 
+board_id    number constraint board_file_fk references board(id) on delete cascade, 
 filename    varchar2(300) /*첨부파일명*/,
 filepath    varchar2(600) /*첨부파일 경로*/ 
 );
+
+create sequence seq_board_file start with 1 increment by 1 nocache;
+
+create or replace trigger trg_board_file
+    before insert on board_file
+    for each row
+begin
+    select seq_board_file.nextval into :new.id from dual;
+end;
+/

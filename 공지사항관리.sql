@@ -50,6 +50,18 @@ begin
 end;
 /
 
+create or replace trigger trg_notice
+    before insert on notice
+    for each row 
+begin
+    select seq_notice.nextval into :new.id from dual;
+    if( :new.root is null ) then
+        /*원글인 경우 root에 값을 넣기 위한 처리*/
+        select seq_notice.currval into :new.root from dual;
+    end if;
+end;
+/
+
 insert into notice(id, title, content, writer)
 values (seq_notice.nextval, '테스트 공지글', '이 글은 테스트 공지글입니다.', 'honghong');
 
