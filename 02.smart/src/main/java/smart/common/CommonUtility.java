@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
 
@@ -21,10 +22,27 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import smart.board.FileVO;
 import smart.member.MemberVO;
 
 @Service
 public class CommonUtility {
+	
+	//첨부파일 여러개를 업로드하는 처리
+	public ArrayList<FileVO> attachedFiles(String category, MultipartFile[] files,
+											HttpServletRequest request) {
+		ArrayList<FileVO> list = null;
+		for(MultipartFile attached : files) {
+			if(attached.isEmpty()) continue;
+			if(list == null)list = new ArrayList<FileVO>();
+			FileVO fileVO = new FileVO();
+			fileVO.setFilename(attached.getOriginalFilename());
+			fileVO.setFilepath(fileUpload(category, attached, request));
+			list.add(fileVO);
+		}
+		return list;
+	}
+	
 	
 	//첨부파일 삭제: 디스크에 저장된 물리적 파일 삭제
 	public void deletedFile(String filepath, HttpServletRequest request) {

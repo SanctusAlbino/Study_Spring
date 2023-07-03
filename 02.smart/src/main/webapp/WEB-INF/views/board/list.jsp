@@ -10,9 +10,12 @@
 <h3 class="my-4">방명록 목록</h3>
 
 <div class="row justify-content-between mb-3">
+	<!--로그인된 경우만 글쓰기 가능   -->
+	<c:if test="${ ! empty loginInfo }">
 	<div class="col-auto">
 		<a class="btn btn-primary" href="new">새글쓰기</a>
 	</div>
+	</c:if>
 </div>
 
 <table class="tb-list">
@@ -34,16 +37,17 @@
 </tr>
 </c:if>
 <c:forEach items="${page.list}" var="vo">
-<tr><td></td>
-	<td></td>
-	<td></td>
-	<td></td>
-	<td></td>
+<tr><td>${vo.no}</td>
+	<td class="text-start">${vo.title}
+		<c:if test="${vo.filecnt gt 0}"><i class="fa-solid fa-paperclip"></i></c:if></td>
+	<td>${vo.name}</td>
+	<td>${vo.writedate}</td>
+	<td>${vo.readcnt}</td>
 </tr>
 </c:forEach>
 </table>
 
-
+<jsp:include page= "/WEB-INF/views/include/page.jsp"></jsp:include>
 
 </body>
 </html>

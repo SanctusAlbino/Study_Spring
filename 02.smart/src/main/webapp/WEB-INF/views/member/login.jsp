@@ -30,7 +30,7 @@
                     
                      <hr>
                      <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                         <a class="small" href="index.html">회원가입</a>
+                         <a class="small" href="join">회원가입</a>
                          <a class="small" href="findPassword">비밀번호 찾기</a>
                      </div>
                  </form>

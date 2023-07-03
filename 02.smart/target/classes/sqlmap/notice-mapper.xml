@@ -25,19 +25,19 @@ where id = #{id}
 
 <!--공지글 신규 답글 저장  -->
 <insert id="replyRegister">
-<![CDATA[
+<!-- <![CDATA[
 {
 call declare begin
 	update notice set step = step + 1 
    	where root = #{root} and step > #{step};
-
+end
+}		
+]]> -->
 
 insert into notice(title, content, writer, filename, filepath, root, step, indent)
 values (#{title}, #{content}, #{writer}, #{filename, jdbcType=VARCHAR}
-		,#{filepath, jdbcType=VARCHAR}, #{root}, #{step}+1, #{indent}+1);
-end
-}		
-]]>
+		,#{filepath, jdbcType=VARCHAR}, #{root}, #{step}+1, #{indent}+1)
+
 </insert>
 
 <!--선택한 공지글 정보 조회  -->

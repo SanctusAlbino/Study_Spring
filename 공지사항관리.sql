@@ -45,7 +45,7 @@ begin
     else
         /*답글인 경우 순서를 위한 step변경처리*/
         update notice set step = step + 1 
-        where root = :old.root and step > :old.step;
+        where root = :old.root and step > :new.step;
     end if;
 end;
 /
@@ -61,6 +61,19 @@ begin
     end if;
 end;
 /
+
+--원글삭제시 답글들 삭제처리
+create or replace trigger trg_notice_delelte
+    after delete on notice
+    for each row
+begin
+    --삭제한 글의 root와 같은 root인 데이터행 삭제
+    delete from notice where root = :old.root;
+end;
+/
+
+alter trigger trg_notice_delelte disable; --disable/enable
+
 
 insert into notice(id, title, content, writer)
 values (seq_notice.nextval, '테스트 공지글', '이 글은 테스트 공지글입니다.', 'honghong');
