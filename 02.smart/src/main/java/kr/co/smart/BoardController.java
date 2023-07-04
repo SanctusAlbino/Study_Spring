@@ -41,6 +41,15 @@ public class BoardController {
 	@Autowired private MemberDAO member;
 	@Autowired private BCryptPasswordEncoder pw;
 	
+	//선택한 방명록 정보 화면 요청
+	@RequestMapping("/info")
+	public String info(Model model, int id, PageVO page) {
+		//선택한 방명록 글 정보를 DB에서 조회해와 화면에 출력할 수 있도록 Model에 담기
+		model.addAttribute("vo", service.board_info(id));
+		model.addAttribute("crlf", "\r\n");
+		model.addAttribute("lf", "\n");
+		return "board/info";
+	}
 	
 	//방명록 목록 화면 요청
 	@RequestMapping("/list")

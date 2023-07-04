@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @Getter @Setter
 public class PageVO {
-	private String search, keyword=""; /*검색유형, 검색어*/
+	private String search, keyword="", viewType="list"; /*검색유형, 검색어, 보기형태*/
 	private int totalList; //DB에서 조회해온 총 글 건수
 	private int pageList =10; //페이지당 보여질 목록 수 
 	private int blockPage = 10;// 블럭당 보여질 페이지의 수 
@@ -37,7 +37,7 @@ public class PageVO {
 		//각 페이지의 끝 목록번호 : 총 목록수 - (페이지번호-1) * 페이지당 보여질 목록수
 		//각 페이지의 시작 목록번호 : 끝 목록번호 -(페이지당 보여질 목록수 -1)
 		endList = totalList - (curPage-1) * pageList;
-		beginList = endList - (pageList);
+		beginList = endList - (pageList-1);
 		
 		//블록번호 : 페이지번호 / 블록당 보여질 페이지수
 		curBlock = curPage / blockPage;

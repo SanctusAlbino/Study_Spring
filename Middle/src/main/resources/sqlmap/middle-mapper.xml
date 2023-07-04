@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="middle">
+
+<select id="hanul" resultType="integer">
+select 1 from dual
+</select>
+
+<select id="info" resultType="com.hanul.middle.MiddleVO">
+select * from customer where id = 1
+</select>
+
+<select id="list" resultType="com.hanul.middle.MiddleVO">
+select * from customer
+</select>	
+</mapper>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cu">
+
+<select id="one" resultType="com.hanul.middle.MiddleVO">
+select * from customer where id = #{id} and name like '%'||#{name}||'%' 
+</select>
+
+<select id="list" resultType="com.hanul.middle.MiddleVO">
+select * from customer
+</select>	
+</mapper>

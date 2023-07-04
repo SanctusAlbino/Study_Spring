@@ -13,9 +13,14 @@ filepath    varchar2(600) /*첨부파일 경로*/ ,
 root        number /*답글관리를 위한 id*/,
 step        number default 0/*글 순서*/,
 indent      number default 0/*들여쓰기*/,
+rid         number constraint notice_rid_fk references notice(id) on delete cascade,
 constraint notice_writer_fk foreign key(writer)
                                 references member(userid) on delete cascade
 );
+alter table notice add(
+rid         number constraint notice_rid_fk references notice(id) on delete cascade
+);
+
 
 alter table notice add(
 root        number /*답글관리를 위한 id*/,

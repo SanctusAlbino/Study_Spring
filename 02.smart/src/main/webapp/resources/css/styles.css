@@ -1447,6 +1447,11 @@ progress {
     flex: 0 0 auto;
     width: 25%;
   }
+  /*한줄에 5개씩 표현하도록 너브 지정  */
+  .col-xl-3-20 {
+    flex: 0 0 auto;
+    width: 20%;
+  }
   .col-xl-4 {
     flex: 0 0 auto;
     width: 33.33333333%;
@@ -6916,6 +6921,22 @@ textarea.form-control-lg {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.text-truncate-v2 {
+  height: 50px;	
+   display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.text-truncate-v3 {
+  height: 72px;	
+   display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
 }
 
 .vr {
