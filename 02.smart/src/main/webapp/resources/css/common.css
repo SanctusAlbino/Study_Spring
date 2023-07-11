@@ -24,6 +24,7 @@ input[type=file]{display:none} /* 기본파일태그는 안보이게 */
 .file-preview img {max-height: 38px; }
 
 textarea.form-control {height:400px; resize:none;}
+.comment textarea{height:150px}
 
 #modal-image .modal-body img{width: 100%}
 

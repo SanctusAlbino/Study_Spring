@@ -19,6 +19,25 @@ public class HomeController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 	
+	@RequestMapping("/xml")
+	public String test() {
+		
+		return "ajax/ex/drink";
+	}
+	
+	@RequestMapping("/test")
+	public String test1(String name, int price, Model model) {
+		model.addAttribute("name", name);
+		model.addAttribute("price", price);
+		
+		return "ajax/ex/test";
+	}
+	
+	
+	
+	
+	
+	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Locale locale, Model model, HttpSession session) {
 		session.setAttribute("now", new java.util.Date().getTime());

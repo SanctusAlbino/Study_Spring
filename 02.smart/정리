@@ -36,3 +36,14 @@ DAO : Mybatis 프레임워크
 View
 
 VO(Value Object) - 영속성(DB 데이터)
+
+동기: 순차처리
+ajax: 비동기처리- 순서없이 처리
+$.ajax({
+	url: 'notice/info'
+	type: 'post', 전송방식(form태그의 method)
+	data: { id:1789, name:'홍길동'},
+	async: true, 기본 비동기처리(true), 동기처리를 해야하는 경우:false
+}).done(function(response){
+	response를 출력/처리하는데 사용
+})

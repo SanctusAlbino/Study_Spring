@@ -48,6 +48,15 @@
 	</td>
 </tr>
 </table>
+<input type="hidden" name="curPage" value="${page.curPage}" />
+<input type="hidden" name="search" value="${page.search}" />
+<input type="hidden" name="keyword" value="${page.keyword}" />
+<input type="hidden" name="viewType" value="${page.viewType}" />
+<input type="hidden" name="pageList" value="${page.pageList}" />
+<input type="hidden" name="id" value="${vo.id}" />
+<!--삭제한 첨부파일 id 목록  -->
+<input type="hidden" name="removed">
+
 <input type="hidden" name="writer" value="${loginInfo.userid}" />
 </form>
 <div class="btn-toolbar gap-2 my-3 justify-content-center"> 
@@ -75,7 +84,7 @@ $('.file-drag').on('dragover dragleave drop', function(e){
 */
 
 <c:forEach items="${vo.fileList}" var="f">
-fileList.setFile(urlToFile("${f.filepath}","${f.filename}"))
+fileList.setFile(urlToFile("${f.filepath}","${f.filename}"), "${f.id}")
 </c:forEach>
 console.log(fileList)
 
@@ -96,9 +105,14 @@ function urlToFile(url, filename){
 	return file;
 }
 
+$('#btn-cancel').click(function(){
+	$('form').attr('action', 'info').submit()
+})
+
 $('#btn-save').click(function(){
 	if(emptyCheck()){	
 		multipleFileUpload();
+		$('[name=removed]').val(fileList.info.removeId)
 		$('form').submit()
 	}
 })

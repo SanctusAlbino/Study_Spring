@@ -78,7 +78,7 @@
                                 <li class="nav-item">
                                 <c:choose>
                                 	<c:when test="${empty loginInfo.profile}">
-                                <i class="font-profile fa-thin fa-user"></i>
+                                <i class="font-profile fa-regular fa-circle-user"></i>
                                 </c:when>
                                 <c:otherwise>
                                 <img class="profile" src="${loginInfo.profile }">

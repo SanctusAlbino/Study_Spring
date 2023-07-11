@@ -1,5 +1,7 @@
 package smart.board;
 
+import java.util.List;
+
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,12 +41,17 @@ public class BoardDAO implements BoardService {
 		vo.setFileList( sql.selectList("board.fileList", id) );
 		return vo;
 	}
-
+	
 	@Override
 	public int board_update(BoardVO vo) {
-		// TODO Auto-generated method stub
-		return 0;
+		//방명록 정보 변경저장 + 추가한 첨부파일정보 저장
+		int update = sql.update("board.update", vo);
+		if( update == 1 && vo.getFileList() != null ) {
+			sql.insert("board.fileRegister", vo);
+		}
+		return update;
 	}
+
 
 	@Override
 	public int board_read(int id) {
@@ -59,6 +66,35 @@ public class BoardDAO implements BoardService {
 	@Override
 	public FileVO board_file_info(int id) {
 		return sql.selectOne("board.fileInfo", id);
+	}
+
+	@Override
+	public List<FileVO> board_file_removed(String removed) {
+		return sql.selectList("board.fileRemoved", removed);
+	}
+	@Override
+	public int board_file_delete(int id) {
+		return sql.delete("board.fileDelete", id);
+	}
+
+	@Override
+	public int board_comment_register(BoardCommentVO vo) {
+		return sql.insert("board.commentRegister", vo);
+	}
+
+	@Override
+	public int board_comment_update(BoardCommentVO vo) {
+		return sql.update("board.commentUpdate", vo);
+	}
+
+	@Override
+	public int board_comment_delete(int id) {
+		return sql.delete("board.commentDelete", id);
+	}
+
+	@Override
+	public List<BoardCommentVO> board_comment_list(int board_id) {
+		return sql.selectList("board.commentList", board_id);
 	}
 
 }

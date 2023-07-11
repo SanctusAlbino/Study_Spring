@@ -1,5 +1,6 @@
 package kr.co.smart;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,12 +10,14 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import smart.common.CommonUtility;
+import smart.common.PageVO;
 import smart.member.MemberDAO;
 import smart.member.MemberVO;
 
@@ -197,7 +200,7 @@ public class MemberController {
 
 	// 카카오로그인 콜백처리
 	@RequestMapping("/kakaoCallback")
-	public String kakaoCallback(String code, HttpSession session) {
+	public String kakaoCallback(String code, HttpSession session, Model model) {
 		if (code == null)
 			return "redirect:/";
 
@@ -240,7 +243,7 @@ public class MemberController {
 			service.member_update(vo);
 		}
 		session.setAttribute("loginInfo", vo);
-		return "redirect:/";
+		return redirectURL(session, model);
 	}
 
 	// 네이버로그인처리 요청
@@ -265,7 +268,7 @@ public class MemberController {
 
 	// 네이버 콜백처리
 	@RequestMapping("/naverCallback")
-	public String naverCallback(String code, String state, HttpSession session) {
+	public String naverCallback(String code, String state, HttpSession session, Model model) {
 		String storedState = (String) session.getAttribute("state");
 		if (code == null || !state.equals(storedState))
 			return "redirect:/";
@@ -326,7 +329,7 @@ public class MemberController {
 		 * "10-01" } }
 		 */
 
-		return "redirect:/";
+		return redirectURL(session, model);
 	}
 
 	private String hasKey(JSONObject json, String key) {
@@ -341,7 +344,7 @@ public class MemberController {
 	// 로그인처리 요청
 	@RequestMapping(value = "/smartLogin")
 	public String login(String userid, String userpw, HttpSession session, HttpServletRequest request,
-			RedirectAttributes redirect) {
+			RedirectAttributes redirect, Model model) {
 
 		// 화면에서 입력한 아이디, 비번이 일치하는 회원정보가 DB에 있는지 확인
 		// 입력한 아이디에 해당하는 회원정보 조회
@@ -352,13 +355,26 @@ public class MemberController {
 		}
 		if (match) {
 			session.setAttribute("loginInfo", vo); // 세션에 로그인한 회원정보 담기
-			return "redirect:/";
+			return redirectURL(session, model);
 		} else {
 			redirect.addFlashAttribute("fail", true);
 			return "redirect:login"; // 로그인화면 다시 요청
 		}
 	}
 
+	
+	private String redirectURL(HttpSession session, Model model) {
+		if( session.getAttribute("redirect") == null ) {
+			return "redirect:/";
+		}else {
+			HashMap<String, Object> map = (HashMap)session.getAttribute("redirect");
+			model.addAttribute("url", map.get("url"));
+			model.addAttribute("id", map.get("id"));
+			model.addAttribute("page", map.get("page"));
+			session.removeAttribute("redirect"); //redirect에 필요한 정보 사용후 세션에서 삭제
+			return "board/redirect";
+		}
+	}
 	/*
 	 * @ResponseBody @RequestMapping( value="/smartLogin",
 	 * produces="text/html; charset=utf-8" ) public String login(String userid,
@@ -380,7 +396,14 @@ public class MemberController {
 
 	// 로그인화면 요청
 	@RequestMapping("/login")
-	public String login(HttpSession session) {
+	public String login(HttpSession session, String id, PageVO page) {
+		if( id != null ) { //댓글작성하려고 로그인하는 경우
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("url", "board/info");
+			map.put("id", id);
+			map.put("page", page);
+			session.setAttribute("redirect", map); //redirect에 필요한 정보 담기
+		}
 		session.setAttribute("category", "login");
 		return "default/member/login";
 	}

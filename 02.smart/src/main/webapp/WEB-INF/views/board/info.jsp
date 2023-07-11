@@ -50,6 +50,28 @@
 	<a class="btn btn-primary" id="btn-modify">방명록 수정</a>
 	<a class="btn btn-primary" id="btn-delete">방명록 삭제</a>
 </div>
+
+<!-- 댓글입력부분 -->
+<div class="row justify-content-center" id="comment-register">
+	<div class="col-md-10 content">
+		<div class="title d-flex align-items-center justify-content-between mb-2 invisible">
+			<span>댓글작성 [ <span class="writing">0</span> / 200 ]</span>
+			<a class="btn btn-outline-primary btn-sm btn-register invisible">댓글등록</a>
+		</div>
+		<div class="comment">
+		<!-- 로그인 여부에 따라 입력하도록 안내/ 로그인하도록 안내 -->
+			<div class="form-control  justify-content-center align-items-center  py-3 d-flex ">
+				<div>${empty loginInfo ? "댓글을 입력하려면 여기를 클릭후 로그인하세요" : "댓글을 입력하세요"}</div>
+			</div>
+		</div>	
+	
+	</div>
+</div>
+<!-- 댓글 목록 출력 부분 -->
+<div class="row justify-content-center mt-4" id="comment-list">
+	
+</div>
+
 <form method="post" >
 <input type="hidden" name="file" />
 <input type="hidden" name="curPage" value="${page.curPage}" />
@@ -66,6 +88,100 @@
 <jsp:include page="/WEB-INF/views/include/modal_alert.jsp"/>
 
 <script>
+commentList();
+
+//댓글목록조회해와 출력
+function commentList(){
+	$.ajax({ 
+		url: '<c:url value="/board/comment/list/${vo.id}"/>'
+	}).done(function(response){
+		console.log(response)
+		$('#comment-list').html(response)
+	})
+}
+
+
+//댓글등록처리
+$('.btn-register').click(function(){
+	//입력한 글이 있을때만 처리
+	var _textarea = $('#comment-register textarea');
+	if( _textarea.val().length == 0 ) return;
+	
+	$.ajax({
+		url: '<c:url value="/board/comment/register"/>',
+		data: { board_id: ${vo.id}, content: _textarea.val(), writer: '${loginInfo.userid}' },
+	}).done(function( response ){
+		console.log( response )
+		if(response){
+			alert("댓글이 등록되었습니다.");
+			initRegisterContent();
+			commentList();
+		}else{
+			alert("실패했다!!");
+		}
+	});
+	
+})
+
+
+$('#comment-register .comment').click(function(){
+	if( ${empty loginInfo} ){ //로그인할 것인지 확인창 띄우기
+		if( confirm('로그인하시겠습니까?') ){
+			$('form').attr('action', "<c:url value='/member/login' />" ).submit()
+		}
+	}else{
+		//form-control이 지정된 태그가 div 이면 입력 안되니 입력태그를 만들어서 교체한다
+		if( $(this).children(".form-control").is("div") ){
+			$(this).children('div.form-control').remove(); //div 는 없애기
+			$(this).append(`<textarea class="form-control w-100"></textarea>`);
+			$(this).children("textarea").focus();
+			$('.content .title').removeClass('invisible');
+		}
+	}
+	
+})
+
+//댓글등록부분 초기화
+function initRegisterContent(){
+	$('#comment-register .writing').text(0);
+	//등록제목부분:등록버튼이 포함된 부분 안보이게
+	$('#comment-register .title').addClass('invisible');
+	
+	//textarea 태그가 아니라 화면 초기화상태로
+	$('#comment-register .comment textarea').remove();
+	$('#comment-register .comment').html(
+		`
+	 	<div class="form-control  justify-content-center align-items-center  py-3 d-flex ">
+			<div>${empty loginInfo ? "댓글을 입력하려면 여기를 클릭후 로그인하세요" : "댓글을 입력하세요"}</div>
+		</div>
+		` 
+	)
+	
+}
+
+//댓글입력 textarea에서 커서를 다른곳으로 이동하면
+$(document).on('focusout', '#comment-register textarea', function(){
+	//입력이 되어 있지 않은 경우 초기화하기
+	$(this).val( $(this).val().trim() );
+	
+	if( $(this).val()== ""){
+		initRegisterContent();
+	}
+	
+}).on('keyup', '.comment textarea',  function(){
+	var comment = $(this).val();
+	if( comment.length > 200 ){
+		alert("최대 200자까지 입력할 수 있습니다");
+		comment = comment.substr(0,200);
+	}
+	$(this).val( comment );	
+	$(this).closest('.content').find('.writing').text( comment.length ); //입력글자수 표현
+	
+	//입력글자수가 1이상 이면 등록버튼 보이게
+	if( comment.length > 0 ) $('.btn-register').removeClass('invisible');
+	else                     $('.btn-register').addClass('invisible'); 
+})
+
 $('#btn-list, #btn-modify, #btn-delete').click(function(){
 	var id = $(this).attr('id');
 	id = id.substr(id.indexOf('-')+1 );
