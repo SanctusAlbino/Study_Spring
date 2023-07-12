@@ -30,11 +30,12 @@ public class DataController {
 //		
 //	}
 	@ResponseBody @RequestMapping("/pharmacy")
-	public Object pharmacy_list(int pageNo) {
+	public Object pharmacy_list(int pageNo, int rows) {
 		StringBuffer url = new StringBuffer("http://apis.data.go.kr/B551182/pharmacyInfoService/getParmacyBasisList");
 		url.append("?ServiceKey=").append(key);
 		url.append("&_type=json");
 		url.append("&pageNo=").append(pageNo);
+		url.append("&numOfRows=").append(rows);
 		HashMap<String, Object>map = new Gson().fromJson(common.requestAPI(url.toString())
 									, new TypeToken<HashMap<String,Object>>(){}.getType());
 		return map;

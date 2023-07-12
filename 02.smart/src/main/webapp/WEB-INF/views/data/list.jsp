@@ -16,14 +16,34 @@
     <a class="nav-link">유기동물조회</a>
   </li>
 </ul>
+<div class="row justify-content-between d-flex">
+	<div class="col-auto">
+		<select id="pageList" class="form-select">
+		<c:forEach var="i" begin="1" end="5">
+		<option value="${10*i}">${10*i}개씩</option>
+		</c:forEach>
+		</select>
+	</div>
+	</div>
 <div id="data-list"></div>
 
 <jsp:include page="/WEB-INF/views/include/loading.jsp"/>
+<jsp:include page="/WEB-INF/views/include/modal_image.jsp"/>
 
+<script type="text/javascript" 
+src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=prmwuakhkw"></script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=763b2f25e869323e2defa8db23b8b900"></script>
 <script>
+//한 페이지에 보여질 목록수 변경시
+$('#pageList').change(function(){
+	page.pageList = $(this).val();
+	pharmacy_list(1);
+})
+
+
 $(function(){
 	//버튼 강제클릭 
-	$('ul.nav-pills li').eq(0).trigger('click');
+	$('ul.nav-pills li').eq(1).trigger('click');
 })
 
 /*  
@@ -72,7 +92,7 @@ function pharmacy_list(pageNo){
 		table = '';
 		$.ajax({
 			url:"<c:url value='/data/pharmacy'/>",
-			data: {pageNo:pageNo },
+			data: {pageNo:pageNo, rows:page.pageList },
 			async: false,
 		}).done(function(response){
 			console.log(response)
@@ -80,7 +100,7 @@ function pharmacy_list(pageNo){
 			$(response.items.item).each(function(){
 				table += 
 				`
-				<tr><td>\${this.yadmNm}</td>
+				<tr><td><a class="map text-link" data-x="\${this.XPos}" data-y="\${this.YPos}">\${this.yadmNm}</a></td>
 					<td>\${this.telno ? this.telno : '-'}</td>
 					<td class="text-start">\${this.addr}</td>
 				</tr>
@@ -91,6 +111,7 @@ function pharmacy_list(pageNo){
 			
 			//페이지 목록 표현
 			makePage(response.totalCount, pageNo)
+			//$('.loading').hide()
 		})
 		
 		setTimeout(function(){
@@ -104,7 +125,84 @@ $(document)
 .on('click','.pagination a', function(){ //페이지번호 클릭시
 	pharmacy_list($(this).data('page'));
 })
+.on('click', '.map',function(){//약국명 클릭시 지도에 약국위치 표시하기
+	if($(this).data('x')=='undefined'|| $(this).data('y')=='undefined'){
+		alert('위경도가 없어 위치를 표시할 수 없습니다.')
+	}else
+		showNaverMap($(this));
+		//showkakaoMap($(this));
+})
 
+//네이버지도로 약국위치 표시
+function showNaverMap(point){
+	$('#modal-image .modal-body').empty();
+	//지도를 담을 영역 만들기
+	$('#modal-image').after("<div id='modal-map' style='width:668px; height:700px'></div>");
+	console.log( point.data('y'), point.data('x') ) // 37.3595704, 127.105399
+// 	var xy = new naver.maps.LatLng( 37.3595704, 127.105399);
+	var xy = new naver.maps.LatLng( point.data('y'), point.data('x')  );
+	var mapOptions = {
+		    center: xy,
+		    zoom: 16
+		};
+
+		var map = new naver.maps.Map('modal-map', mapOptions);
+		
+		var marker = new naver.maps.Marker({
+		    position: xy,
+		    map: map
+		});
+		
+		//마커위에 정보창 만들기
+		
+		var name = point.text();
+		var infowindow = new naver.maps.InfoWindow({
+		    content : `<div class='text-danger fw-bold p-2'>\${name}</div>` 
+		});
+		 infowindow.open(map, marker);
+		
+		$('#modal-image .modal-body').html($('#modal-map'));
+		new bootstrap.Modal($('#modal-image')).show();
+}		
+		
+//카카오지도로 약국위치 표시
+function showkakaoMap(point){
+	$('#modal-image .modal-body').empty();
+	//지도를 담을 영역 만들기
+	$('#modal-image').after("<div id='modal-map' style='width:668px; height:700px'></div>");
+	
+	var xy = new kakao.maps.LatLng(point.data('y'), point.data('x')); //위(y)/경도(x)
+	
+	var container = document.getElementById('modal-map'); //지도를 담을 영역의 DOM 레퍼런스
+	var options = { //지도를 생성할 때 필요한 기본 옵션
+		center: xy, //지도의 중심좌표.
+		level: 3 //지도의 레벨(확대, 축소 정도)
+	};
+
+	var map = new kakao.maps.Map(container, options); //지도 생성 및 객체 리턴
+	
+	// 마커를 생성합니다
+	var marker = new kakao.maps.Marker({
+	    position: xy
+	});
+
+	// 마커가 지도 위에 표시되도록 설정합니다
+	marker.setMap(map);
+	
+	// 인포윈도우를 생성합니다
+	var name = point.text();
+	var infowindow = new kakao.maps.InfoWindow({
+	    position : xy, 
+	    content : `<div class='text-danger fw-bold p-2'>\${name}</div>` 
+	});
+	  
+	// 마커 위에 인포윈도우를 표시합니다. 두번째 파라미터인 marker를 넣어주지 않으면 지도 위에 표시됩니다
+	infowindow.open(map, marker); 
+	
+	$('#modal-image .modal-body').html($('#modal-map'));
+	new bootstrap.Modal($('#modal-image')).show();
+}
+//네이버 맵 client id: prmwuakhkw
 var page = {pageList:10, blockPage: 10}; //페이지당 보여질 목록수, 블럭당보여질 페이지수
 //페이지정보 만들기
 function makePage( totalList, curPage){
@@ -162,7 +260,19 @@ function makePage( totalList, curPage){
 }
 //유기동물목록 조회
 function animal_list(pageNo){
+	$('#data-list').empty();
+	$('.loading').show();
 	
+	$.ajax({
+//		url: '<c:url value="/data/animal/list"/>'
+		url: '<c:url value="animal/list"/>',  //둘중하나 사용
+		data: {pageNo: pageNO, rows:page.pageList},
+		async: false,
+	}).done(function(response){
+		console.log(response)
+	})
+	
+	setTimeout(function() {$('.loading').hide()}, 500);
 }
 </script>
 
