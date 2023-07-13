@@ -11,6 +11,7 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.HtmlEmail;
+import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -179,6 +181,13 @@ public class CommonUtility {
 			send= false;
 		}
 		return send;
+	}
+	
+	//공공데이터 API요청 결과 문자열을 JSON으로 변환하고, 필요한 데이터 수집하는 메소드 선언
+	public Map<String, Object> requestAPIResultInfo(Object apiURL) {
+		JSONObject json = new JSONObject(requestAPI(apiURL.toString()));
+		json = json.getJSONObject("response");
+		return json.getJSONObject("body").toMap();
 	}
 	
 	//API 요청
