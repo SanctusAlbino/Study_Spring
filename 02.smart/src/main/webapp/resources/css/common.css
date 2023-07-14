@@ -29,6 +29,10 @@ textarea.form-control {height:400px; resize:none;}
 
 #modal-image .modal-body img{width: 100%}
 
+.w-px350 {width: 350px;}
+.w-px300 {width: 300px;}
+.w-px250 {width: 250px;}
+.w-px200 {width: 200px;}
 .w-px100 {width: 100px;}
 .w-px90 {width: 90px;}
 .w-px80 {width: 80px;}

@@ -9,6 +9,36 @@
 	new bootstrap.Modal($('#modal-image')).show();
 	
 })
+.on('change', '#upkind', function(){
+	//축종 변경시 해당 품종 조회하기
+	animal_kind();
+	animal_list(1);
+})
+//축종에 대한 품종 조회
+function animal_kind(){
+	$('#kind').remove();
+	$.ajax({
+		url: 'animal/kind',
+		data: {upkind: $('#upkind').val()},
+	}).done(function(response){
+		$('#upkind').after(response)
+	})
+}
+
+ 
+//축종태그만들기
+function animal_type(){
+	var type =`
+		<select class="form-select" id="upkind">
+			<option value=''>축종선택</option>
+			<option value='417000'>개</option>
+			<option value='422400'>고양이</option>
+			<option value='429900'>기타</option>
+		</select>
+		`;
+		$('.animal-top').append(type);
+} 
+ 
  
  //시도 조회
  function animal_sido(){
@@ -16,6 +46,7 @@
 		url: 'animal/sido'
 	}).done(function(response){
 		$('.animal-top').append(response);
+		animal_type();
 	})
 }
  
@@ -34,6 +65,9 @@ function animal_list(pageNo){
 	var animal = page; //요청하는 페이지번호, 페이지당 보여질 목록수
 	animal.sido = $('#sido').length==0 ? '' : $('#sido').val();
 	animal.sigungu = $('#sigungu').length==0 ? '' : $('#sigungu').val();
+	animal.shelter = $('#shelter').length==0 ? '' : $('#shelter').val();
+	animal.upkind = $('#upkind').length==0 ? '' : $('#upkind').val();
+	animal.kind = $('#kind').length==0 ? '' : $('#kind').val();
 	
 	
 	$.ajax({

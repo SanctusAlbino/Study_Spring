@@ -8,7 +8,20 @@
 </select>
 
 <script>
+//시군구 선택시
 $('#sigungu').change(function(){
+	animal_shelter();
 	animal_list(1);
 })
+//보호소 조회
+function animal_shelter(){
+	$('#shelter').remove();
+	if($('#sigungu').val()=='') return;
+	$.ajax({
+		url: 'animal/shelter', 
+		data: {sido: $('#sido').val(), sigungu: $('#sigungu').val()}
+	}).done(function(response){
+		$("#sigungu").after(response);
+	})
+}
 </script>

@@ -88,6 +88,30 @@ public class DataController {
 		return "data/animal/sido";
 	}
 	
+	//보호소 조회 요청
+	@RequestMapping("/animal/shelter")
+	public String animal_shelter(String sido, String sigungu, Model model) {
+		StringBuffer url = new StringBuffer(animalURL);
+		url.append("shelter?serviceKey=").append(key);
+		url.append("&_type=json");
+		url.append("&upr_cd=").append(sido);
+		url.append("&org_cd=").append(sigungu);
+		model.addAttribute("list", common.requestAPIResultInfo(url));
+		return "data/animal/shelter";
+	}
+	
+	//품종 조회 요청
+	@RequestMapping("/animal/kind")
+	public String animal_kind(String upkind, Model model) {
+		StringBuffer url = new StringBuffer(animalURL);
+		url.append("kind?serviceKey=").append(key);
+		url.append("&_type=json");
+		url.append("&up_kind_cd=").append(upkind);
+		model.addAttribute("list", common.requestAPIResultInfo(url));
+		return "data/animal/kind";
+	}
+	
+	
 	//유기동물 조회 요청
 	// jsp에서 보낸 json 파라미터는 바로 데이터객체에 담기지 않는다.
 		@RequestMapping("/animal/list")
@@ -99,6 +123,9 @@ public class DataController {
 			url.append("&numOfRows=").append(map.get("pageList"));
 			url.append("&upr_cd=").append(map.get("sido"));
 			url.append("&org_cd=").append(map.get("sigungu"));
+			url.append("&care_reg_no=").append(map.get("shelter"));
+			url.append("&upkind=").append(map.get("upkind"));
+			url.append("&kind=").append(map.get("kind"));
 			model.addAttribute("list", common.requestAPIResultInfo(url.toString()));
 			
 			return "data/animal/animal_list";

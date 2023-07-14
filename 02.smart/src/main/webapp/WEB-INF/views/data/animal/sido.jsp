@@ -16,6 +16,7 @@ $('#sido').change(function(){
 //시도 에 따른 시군구 조회
 function animal_sigungu(){
 	$('#sigungu').remove();
+	$('#shelter').remove();
 	if($('#sido').val()=='') return; //시도선택 이란 기본을 선택시는 시군구 조회할 수 없음
 	
 	$.ajax({

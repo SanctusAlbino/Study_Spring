@@ -11,6 +11,7 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -185,9 +186,26 @@ public class CommonUtility {
 	
 	//공공데이터 API요청 결과 문자열을 JSON으로 변환하고, 필요한 데이터 수집하는 메소드 선언
 	public Map<String, Object> requestAPIResultInfo(Object apiURL) {
-		JSONObject json = new JSONObject(requestAPI(apiURL.toString()));
-		json = json.getJSONObject("response");
-		return json.getJSONObject("body").toMap();
+		try {
+			JSONObject json = new JSONObject(requestAPI(apiURL.toString()));
+			json = json.getJSONObject("response");
+			if(json.has("body")) {
+			
+			return json.getJSONObject("body").toMap();			
+		}else {
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("items", null);
+			map.put("totalCount", 0);
+			map.put("pageNo", 1);
+			return map;
+		}
+		}catch(Exception e) {
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("items", null);
+			map.put("totalCount", 0);
+			map.put("pageNo", 1);
+			return map;
+		}
 	}
 	
 	//API 요청
@@ -216,7 +234,7 @@ public class CommonUtility {
 		      System.out.println(e);
 		    }
 		 
-		 return response;
+		 return response; // "{response:{body:{},header:{}}}"
 	}
 	
 	//API 요청
