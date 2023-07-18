@@ -114,7 +114,7 @@ from employees e inner join
          from employees
          group by department_id) e left outer join departments d using(department_id)
          where rank <= 3) r using (department_id))
-pivot(count(*) for unit in ('01', '02', '03', '04', '05', '06',
-                                '07', '08', '09', '10', '11', '12') )
+pivot(count(*) for unit in ('01' "01월", '02'"02월", '03'"03월", '04'"04월", '05'"05월", '06'"06월",
+                                '07'"07월", '08'"08월", '09'"09월", '10'"10월", '11'"11월", '12'"12월") )
 order by department_name
 ;
