@@ -5,10 +5,10 @@
 	<title>Home</title>
 </head>
 <body>
-<div>
+<h1>
+	Hello world!  
+</h1>
 
-</div>
-
-
+<P>  The time on the server is ${serverTime}. </P>
 </body>
 </html>

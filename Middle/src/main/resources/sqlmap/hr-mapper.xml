@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="employee">
+
+<!-- 전체 사원정보 조회 -->
+<select id="list" resultType="middle.hr.EmployeeVO">
+select employee_id, last_name||' '||first_name name,
+case when mod(employee_id,2) =0 then email||'@gmail.com'
+     when mod(employee_id,2) =1 then email||'@naver.com' 
+end email,
+replace (phone_number, '.', '-') phone_number ,
+TO_CHAR(hire_date, 'YYYY-MM-DD')hire_date,
+case when commission_pct is null then TO_CHAR(salary*1289, 'FM999,999,999,999')||'원'
+     ELSE TO_CHAR((salary*1289)+(salary*1289*commission_pct), 'FM999,999,999,999')||'원('|| TO_CHAR(salary*1289*commission_pct, 'FM999,999,999,999')||')' 
+    end salary
+from employees
+</select>
+
+</mapper>
