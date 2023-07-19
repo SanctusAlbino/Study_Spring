@@ -4,6 +4,7 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -18,6 +19,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class HomeController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+	
+	//오류처리
+	@RequestMapping("/error")
+	public String error(HttpSession session, HttpServletRequest request, Model model) {
+		session.setAttribute("category", "error");
+		//header, footer없이
+		//Object --> Integer --> int
+		int code = (Integer)request.getAttribute("javax.servlet.error.status_code"); //오류코드
+		model.addAttribute("code", code);
+		model.addAttribute("method", request.getMethod());
+		//오류내용:500
+		if(code==500) {
+			Throwable exception
+			=(Throwable)request.getAttribute("javax.servlet.error.exception");
+			model.addAttribute("error", exception.getMessage());
+		}
+		return "default/error/"+(code == 404 ? 404 : "common");
+	}
 	
 	//시각화 화면 요청
 	@RequestMapping("/visual/list")

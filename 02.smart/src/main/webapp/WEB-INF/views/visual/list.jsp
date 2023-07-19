@@ -102,11 +102,72 @@ function hirement_info(){
 //부서원수 상ㅇ위 3위까지의 년도별/월별 채용인원수
 function hirement_top3(){
 	initCanvas();
-	var unit = $('[name=unit]:checked').val();
+	var unit = $('[name=unit]:checked').val(); //year/month
 	$.ajax({
 		url: 'hirement/top3/' + unit,
 	}).done(function(response){
 		console.log(response)
+		//년도별: 막대, 월별: 선 
+		var info ={};
+		info.type = unit=='year'? 'bar' : 'line' ;
+		info.title = `상위 3위 부서의\${unit=='year'? '년도별' : '월별'} 채용인원수`;
+		info.category = response.unit;
+		info.datas = [], info.label= [];
+		$(response.list).each(function(idx, item){
+			//item == $(this)
+			info.label.push(this.DEPARTMENT_NAME);
+			//배열로 이루어진 category 의 값을 키로 하여 새로운 배열을 뽑아내기
+			var datas = info.category.map(function(category){
+				return item[category]
+			});
+			info.datas.push(datas); //4개의 정보
+		})
+		console.log(info)
+		
+		top3Chart(info);
+	})
+}
+
+function top3Chart(info){
+	$('#tab-content').css('height', 560);
+	var datas = [
+		
+	];
+	for(var idx=0; idx<info.label.length; idx++){
+		var department = {};
+		department.label = info.label[idx];
+		department.data = info.datas[idx];
+		department.backgroundColor = colors[idx];
+		department.borderColor = colors[idx];
+		datas.push(department);
+	}
+	Visual = new Chart($('#Chart'), {
+		type: info.type,
+		data:{
+			labels: info.category,
+			datasets: datas,
+		},
+		options:{
+			layout: { padding:{top:30}},
+			plugins:{
+				datalabels:{
+					formatter: function(v){
+						return v==0 ? '' :`\${v}명`;
+					}
+				},
+				legend:{
+					display: true,
+					labels: {font:{size:14}},
+				}
+			},
+			responsive: false,
+			maintainAspectRatio : false,
+			scales: {
+				y: {
+					title: {text:info.title, display:true }
+				}
+			}
+		}
 	})
 }
 
@@ -126,7 +187,8 @@ $('ul.nav-tabs li').on({
 		$('#tab-content .tab').addClass('d-none');
 		$('#tab-content .tab').eq(idx).removeClass('d-none');
 		if(idx==0) 					department(); //부서원수 조회
-		else if(idx==1)				hirement();		//채용인원수 조회
+		else if(idx==1)				hirement_info();		//채용인원수 조회
+		else initCanvas();
 		
 	},
 	

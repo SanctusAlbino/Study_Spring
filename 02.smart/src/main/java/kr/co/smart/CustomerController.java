@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import smart.customer.CustomerServiceImpl;
@@ -55,7 +56,7 @@ public class CustomerController {
 	
 	
 	// 고객상세정보화면 요청
-	@RequestMapping("/info.cu")
+	@RequestMapping(value="/info.cu", method = {RequestMethod.POST, RequestMethod.GET})
 	public String info(Model model, int id) {
 		//비즈니스로직: 선택한 고객정보를 DB에서 조회해와 
 		//			화면에 출력할 수 있도록 데이터를 Model객체에 담는다

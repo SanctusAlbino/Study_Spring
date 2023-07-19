@@ -3,6 +3,7 @@
 <%@taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <c:choose>
 	<c:when test="${category eq 'login'}"><c:set var="title" value="로그인"/></c:when>
+	<c:when test="${category eq 'error'}"><c:set var="title" value="오류"/></c:when>
 </c:choose>
 
 
